@@ -1,4 +1,5 @@
 import React from 'react'
+import AppLayout from '../components/Layout/AppLayout'
 
 function Home() {
   return (
@@ -8,4 +9,4 @@ function Home() {
   )
 }
 
-export default Home
+export default AppLayout()(Home)
