@@ -1,27 +1,72 @@
-import React from 'react'
-import Header from './Header'
-import { Grid } from '@mui/material'
+// import React from 'react'
+// import Header from './Header'
+// import { Grid } from '@mui/material'
+
+// const AppLayout = () => (WrappedComponent) => {
+//   return (props) => {
+//     return (
+//         <>
+//             <Header />
+//             <Grid
+//                 container
+//                 height="calc(100vh - 4rem)"
+//                 sx={{
+//                   width: "100vw",           // Ensures grid takes full viewport width
+//                   margin: 0,                // Removes default margin
+//                   maxWidth: "100vw",        // Prevents overflow
+//                   flexWrap: "nowrap"        // Prevents items from wrapping
+//                 }}
+//             >
+//                 <Grid item xs={4} md={3} height="100%" 
+//                    sx={{
+//                     display:{xs: "none" , sm: "block"}, // Hides on small screens
+//                    }}>
+//                     First
+//                 </Grid>
+//                 <Grid item xs={12} sm={8} md={5} lg={6} height="100%">
+//                     <WrappedComponent {...props}/>
+//                 </Grid>
+//                 <Grid item xs={4} md={4} lg={3} height="100%"
+//                     sx={{display: {xs: "none", md: "block"},
+//                     padding: "2rem",
+//                     bgcolor: "rgba(0, 0, 0, 0.85)"}}>
+//                     Third
+//                 </Grid>
+//             </Grid>
+//         </>
+//     )
+//   }
+// }
+
+// export default AppLayout
+
+
+
+import React from "react";
+import Header from "./Header";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
     return (
-        <>
-            <Header />
-            <Grid container height={"calc(100vh - 4rem)"}>
-                <Grid item xs={4} height={"100%"}>
-                    First
-                </Grid>
-                <Grid item xs={4} height={"100%"} bgcolor="primary.main">
-                    <WrappedComponent {...props}/>
-                </Grid>
-                <Grid item xs={4} height={"100%"}>
-                    Third
-                </Grid>
-            </Grid>
-            
-        </>
-    )
-  }
-}
+      <>
+        <Header />
+        <div className="w-screen h-[calc(100vh-4rem)] flex flex-row">
+          {/* Left Sidebar: hidden on xs, visible on sm and up */}
+          <div className="hidden sm:block sm:w-1/6 md:w-1/4 h-full bg-gray-100">
+            First
+          </div>
+          {/* Center Content */}
+          <div className="w-full sm:w-4/6 md:w-2/4 lg:w-1/2 h-full">
+            <WrappedComponent {...props} />
+          </div>
+          {/* Right Sidebar: hidden on xs and sm, visible on md and up */}
+          <div className="hidden md:block md:w-1/4 lg:w-1/6 h-full bg-black bg-opacity-85 p-8 text-white">
+            Third
+          </div>
+        </div>
+      </>
+    );
+  };
+};
 
-export default AppLayout
+export default AppLayout;
