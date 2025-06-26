@@ -44,25 +44,31 @@
 
 import React from "react";
 import Header from "./Header";
+import ChatList from "../../specific/ChatList";
+import { sampleChats } from "../../constants/sampleData";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
     return (
       <>
         <Header />
-        <div className="w-screen h-[calc(100vh-4rem)] flex flex-row">
+        <div className="w-full h-[calc(100vh-4rem)] flex flex-row">
+
           {/* Left Sidebar: hidden on xs, visible on sm and up */}
           <div className="hidden sm:block sm:w-1/6 md:w-1/4 h-full bg-gray-100">
-            First
+            <ChatList chats={sampleChats} chatId={"1"}/>
           </div>
+
           {/* Center Content */}
-          <div className="w-full sm:w-4/6 md:w-2/4 lg:w-1/2 h-full">
+          <div className="w-full sm:w-5/6 md:w-2/4 lg:w-1/2 h-full">
             <WrappedComponent {...props} />
           </div>
+
           {/* Right Sidebar: hidden on xs and sm, visible on md and up */}
-          <div className="hidden md:block md:w-1/4 lg:w-1/6 h-full bg-black bg-opacity-85 p-8 text-white">
+          <div className="hidden md:block md:w-1/4 lg:w-1/4 h-full bg-black bg-opacity-85 p-4 text-white">
             Third
           </div>
+
         </div>
       </>
     );
