@@ -46,9 +46,20 @@ import React from "react";
 import Header from "./Header";
 import ChatList from "../../specific/ChatList";
 import { sampleChats } from "../../constants/sampleData";
+import { useParams } from "react-router-dom";
+import Profile from "../../specific/Profile";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
+
+    const params = useParams();
+    const chatId = params.chatId ;
+
+    const handleDeleteChat = (e , _id , groupChat) => {
+      e.preventDefault();
+      console.log("Delete chat clicked", _id, groupChat);
+    }
+
     return (
       <>
         <Header />
@@ -56,7 +67,14 @@ const AppLayout = () => (WrappedComponent) => {
 
           {/* Left Sidebar: hidden on xs, visible on sm and up */}
           <div className="hidden sm:block sm:w-1/6 md:w-1/4 h-full bg-gray-100">
-            <ChatList chats={sampleChats} chatId={"1"}/>
+            <ChatList chats={sampleChats} chatId={chatId} 
+                // newMessagesAlert={[{
+                //   chatId: chatId,
+                //   count: 4,
+                // },]}
+                onlineUsers={["1" , "2"]}
+                handleDeleteChat={handleDeleteChat}
+            />
           </div>
 
           {/* Center Content */}
@@ -66,7 +84,7 @@ const AppLayout = () => (WrappedComponent) => {
 
           {/* Right Sidebar: hidden on xs and sm, visible on md and up */}
           <div className="hidden md:block md:w-1/4 lg:w-1/4 h-full bg-black bg-opacity-85 p-4 text-white">
-            Third
+            <Profile />
           </div>
 
         </div>

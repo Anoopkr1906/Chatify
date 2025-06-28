@@ -1,6 +1,7 @@
 import React, { memo } from 'react'
 import { Link } from '../styles/StyledComponents'
 import { Box, Stack, Typography } from '@mui/material'
+import AvatarCard from './AvatarCard'
 
 function ChatItem({
     avatar=[],
@@ -11,13 +12,13 @@ function ChatItem({
     isOnline,
     newMessageAlert,
     index,
-    handleDeleteChatOpen,
+    handleDeleteChat,
 }) 
 {
   return (
-    <Link sx={{padding: "0"}} to={`/chat/${_id}`} onContextMenu={(e) => handleDeleteChatOpen(e , _id , groupChat)}>
+    <Link sx={{padding: "0"}} to={`/chat/${_id}`} onContextMenu={(e) => handleDeleteChat(e , _id , groupChat)}>
 
-        <div style={{
+        <Box style={{
             display: "flex",
             gap: "1rem",
             alignItems: "center",
@@ -25,10 +26,17 @@ function ChatItem({
             backgroundColor: sameSender ? "black" : "unset",
             color: sameSender ? "white" : "unset",
             position: "relative",
+            cursor: "pointer",
+            transition: "background 0.2s",
+            "&:hover": {
+                backgroundColor: sameSender ? "#222" : "#f3f4f6", // darker on hover if selected, gray otherwise
+            },
         }}>
 
             {/* Avatar Card*/}
-
+            <Box sx={{ width: 80, flexShrink: 0, display: "flex", alignItems: "center", overflow: "hidden" }}>
+                <AvatarCard avatar={avatar}/>
+            </Box>
 
             <Stack>
                 <Typography>
@@ -59,10 +67,14 @@ function ChatItem({
                 )
             }
 
-        </div>
+        </Box>
 
     </Link>
   )
 }
 
 export default memo(ChatItem)
+
+
+
+
