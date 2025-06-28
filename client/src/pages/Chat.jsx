@@ -4,6 +4,14 @@ import { grayColor, orange } from '../constants/color';
 import {IconButton, Stack} from '@mui/material'
 import { AttachFile as AttachFileIcon, Send as SendIcon} from '@mui/icons-material';
 import { InputBox } from '../components/styles/StyledComponents';
+import FileMenu from '../dialogues/FileMenu';
+import { sampleMessage } from '../constants/sampleData';
+import MessageComponent from '../components/shared/MessageComponent';
+
+const user = {
+  _id: "hkwhwbdci",
+  name: "Anoop Kumar"
+}
 
 const Chat = () => {
 
@@ -24,6 +32,11 @@ const Chat = () => {
       >
         
         {/* Messages Render */}
+        {
+          Array.isArray(sampleMessage) && sampleMessage.map((i) => (
+            <MessageComponent message={i} user={user} key={i._id || i.id || Math.random()}/>
+          ))
+        }
 
       </Stack>
 
@@ -63,6 +76,8 @@ const Chat = () => {
         </Stack>
 
       </form>
+
+      <FileMenu />
       
     </Fragment>
   )
