@@ -3,11 +3,10 @@ import React , {Suspense, useState , lazy} from 'react'
 import { orange } from '../../constants/color'
 import {Menu as MenuIcon , Search as SearchIcon , Add as AddIcon , Group as GroupIcon , Logout as LogoutIcon , Notifications as NotificationsIcon} from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
-import Search from '../../specific/Search'
 
 const SearchDialogue = lazy(() => import('../../specific/Search'));
 const NotificationDialogue = lazy(() => import('../../specific/Notifications'));
-const NewGroupDialogue = lazy(() => import('../../dialogues/NewGroup'));
+const NewGroupDialogue = lazy(() => import('../../specific/NewGroup'));
 
 const Header = () => {
 
