@@ -33,6 +33,7 @@
 
 import React from 'react'
 import { AvatarGroup, Stack, Avatar, Box } from '@mui/material'
+import { transformImage } from '../../lib/features'
 
 function AvatarCard({ avatar = [], max = 4 }) {
   return (
@@ -49,7 +50,7 @@ function AvatarCard({ avatar = [], max = 4 }) {
           {avatar.map((src, index) => (
             <Avatar
               key={index}
-              src={src}
+              src={transformImage(src)}
               alt={`Avatar ${index}`}
               sx={{ width: 32, height: 32}}
             />
