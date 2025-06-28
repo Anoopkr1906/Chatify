@@ -13,7 +13,9 @@ function Notifications() {
   return (
     <Dialog open>
 
-      <Stack p={{xs: "1rem" , sm: "2rem"}} maxWidth={"25rem"}>
+      <Stack p={{xs: "1rem" , sm: "2rem"}} maxWidth={"25rem"}
+        sx={{background: "linear-gradient(135deg, #f8fafc 0%, #a5b4fc 100%)"}}
+      >
 
         <DialogTitle>
           Notifications 

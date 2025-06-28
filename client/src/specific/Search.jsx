@@ -19,7 +19,9 @@ const Search = () => {
 
   return (
     <Dialog open>
-      <Stack p={"2rem"} direction={"column"} width={"25rem"}>
+      <Stack p={"2rem"} direction={"column"} width={"25rem"}
+        sx={{background: "linear-gradient(135deg, #f8fafc 0%, #a5b4fc 100%)"}}
+      >
 
         <DialogTitle textAlign={"center"}>Find People</DialogTitle>
         <TextField
