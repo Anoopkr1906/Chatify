@@ -7,10 +7,7 @@ export const sampleChats = [
         members: ["1", "2"]
     },
     {
-        avatar: ["https://tse1.mm.bing.net/th?id=OIP.x5OymlAqom83zD983kqnewHaEo&pid=Api&P=0&h=180",
-                "https://tse1.mm.bing.net/th?id=OIP.x5OymlAqom83zD983kqnewHaEo&pid=Api&P=0&h=180",
-                "https://tse1.mm.bing.net/th?id=OIP.x5OymlAqom83zD983kqnewHaEo&pid=Api&P=0&h=180",
-            "https://tse1.mm.bing.net/th?id=OIP.x5OymlAqom83zD983kqnewHaEo&pid=Api&P=0&h=180"],
+        avatar: ["https://tse1.mm.bing.net/th?id=OIP.x5OymlAqom83zD983kqnewHaEo&pid=Api&P=0&h=180",],
         name : "Anooz Kumar",
         _id: "2",
         groupChat: false,
