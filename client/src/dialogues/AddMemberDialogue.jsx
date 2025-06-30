@@ -1,20 +1,26 @@
 import { Button, Dialog, DialogTitle, Stack, Typography } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import { sampleUsers } from '../constants/sampleData'
 import UserItem from '../components/shared/UserItem'
 
 function AddMemberDialogue({addMember , isLoadingAddMember , chatId}) {
 
-    const addFriendHandler = (id) => {
-        addMember(id, chatId);
-    }
+    const [members , setMembers] = useState(sampleUsers);
+    const [selectedMembers , setSelectedMembers] = useState([]);
+    
+    
+    const selectMemberHandler = (id) => {
+        setSelectedMembers((prev) => prev.includes(id) ? prev.filter(i => i !== id ) : [...prev , id]);
+    };
+
 
     const addMemberSubmitHandler = () => {
-
+        closeHandler();
     }
 
     const closeHandler = () => {
-
+        setMembers([]);
+        setSelectedMembers([]);
     }
 
   return (
@@ -26,9 +32,11 @@ function AddMemberDialogue({addMember , isLoadingAddMember , chatId}) {
             </DialogTitle>
 
             <Stack spacing={"1rem"}>
-                { sampleUsers.length > 0 ? (
-                    sampleUsers.map((user) => (
-                        <UserItem key={user._id} user={user} handler={addFriendHandler}/>
+                { members.length > 0 ? (
+                    members.map((user) => (
+                        <UserItem key={user._id} user={user} handler={selectMemberHandler}
+                            isAdded={selectedMembers.includes(user._id)}
+                        />
                     ))
                     ) : (
                         <Typography textAlign={"center"}>No friends</Typography>

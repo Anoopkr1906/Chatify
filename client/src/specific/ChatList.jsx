@@ -14,6 +14,7 @@
 import { Stack } from '@mui/material'
 import React from 'react'
 import ChatItem from '../components/shared/ChatItem'
+import { bgGradient } from '../constants/color';
 
 function ChatList({
     w="100%" , 
@@ -29,7 +30,9 @@ function ChatList({
     handleDeleteChat,
 }) {
   return (
-    <Stack width={w} direction={"column"}>
+    <Stack width={w} direction={"column"} overflow={"auto"} height={"100%"} sx={{
+        backgroundImage: bgGradient
+    }}>
 
         {
             chats?.map((data , index) => {

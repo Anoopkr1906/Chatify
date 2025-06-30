@@ -44,7 +44,8 @@ function AvatarCard({ avatar = [], max = 4 }) {
               '& .MuiAvatar-root': {
                 marginLeft: '-24px', // more negative = more overlap
                 border: '2px solid white', // optional: adds a border for separation
-              }
+              },
+              position: "relative",
             }}
           >
           {avatar.map((src, index) => (

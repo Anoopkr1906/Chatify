@@ -43,16 +43,17 @@
 import { Delete as DeleteIcon , Add as AddIcon, Done as DoneIcon, Edit as EditIcon, KeyboardBackspace as KeyboardBackspaceIcon, Menu as MenuIcon} from '@mui/icons-material';
 import { Backdrop, Box, Button, Drawer, IconButton, Stack, TextField, Tooltip, Typography } from '@mui/material';
 import React , {useState , memo, useEffect, lazy, Suspense} from 'react';
-import { lightBlue, natBlack } from '../constants/color';
+import { bgGradient, lightBlue, natBlack } from '../constants/color';
 import { useNavigate , useSearchParams} from 'react-router-dom';
 import { Link } from '../components/styles/StyledComponents';
 import AvatarCard from '../components/shared/AvatarCard';
-import { sampleChats } from '../constants/sampleData';
+import { sampleChats, sampleUsers } from '../constants/sampleData';
+import UserItem from '../components/shared/UserItem';
 
 const ConfirmDeleteDialogue = lazy(() => import('../dialogues/ConfirmDeleteDialogue'));
 const AddMemberDialogue = lazy(() => import('../dialogues/AddMemberDialogue'));
 
-const isAddMember = true ;
+const isAddMember = false ;
 
 const Groups = () => {
 
@@ -105,9 +106,15 @@ const Groups = () => {
     closeConfirmDeleteHandler();
   }
 
+  const removeMemberHandler = (id) => {
+    console.log("Remove member with id: ", id);
+  }
+
   useEffect(() => {
-    setGroupName(`Group Name ${chatId}`);
-    setGroupNameUpdatedValue(`Group Name ${chatId}`);
+    if(chatId){
+      setGroupName(`Group Name ${chatId}`);
+      setGroupNameUpdatedValue(`Group Name ${chatId}`);
+    }
 
     return () => {
       setGroupName("");
@@ -199,12 +206,12 @@ const Groups = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar: hidden on xs, 1/3 width on sm+ */}
-      <div className="hidden sm:block sm:w-1/3 bg-orange-200">
+      <div className="hidden sm:block sm:w-1/3">
         <GroupsList myGroups={sampleChats} chatId={chatId}/>
       </div>
 
       {/* Main content: full width on xs, 2/3 width on sm+ */}
-      <div className="w-full sm:w-2/3 flex flex-col items-center relative pt-1 pl-3 pr-3 pb-1">
+      <div className="w-full sm:w-2/3 flex flex-col items-center relative pl-3 pr-3">
         {IconBtns}
 
         {groupName && 
@@ -230,11 +237,26 @@ const Groups = () => {
                 md: "1rem 4rem",
               }}
               width={"100%"}
-              bgcolor={"bisque"}
+              // bgcolor={"bisque"}
               height={"50vh"}
               overflow={"auto"}
             >
               {/* Members */}
+
+              {
+                sampleUsers.map((i) => (
+                  <UserItem user={i} isAdded
+                    styling={{
+                      boxShadow: "0 0 0.5rem rgba(0,0,0,0.2)",
+                      padding: "1rem 2rem",
+                      borderRadius: "1rem"
+                    }}
+                    key={i._id}
+                    handler={removeMemberHandler}
+                  />
+                ))
+              }
+
             </Stack>
 
             {ButtonGroup}
@@ -267,7 +289,8 @@ const Groups = () => {
           display: {
             xs: "block",
             sm: "none"
-          }
+          },
+          backgroundImage: bgGradient
         }}
         open={isMobileMenuOpen} onClose={handleMobileClose}
       >
@@ -280,7 +303,7 @@ const Groups = () => {
 
 const GroupsList = ({w="100%" , myGroups=[] , chatId}) => (
 
-     <Stack width={w} direction={"column"}>
+     <Stack width={w} direction={"column"} sx={{backgroundImage: bgGradient , height: "100vh"}} overflow={"auto"}>
         {
           myGroups.length > 0 ? (myGroups.map((group) => {
             return <GroupListItem group={group} chatId={chatId} key={group._id}/>

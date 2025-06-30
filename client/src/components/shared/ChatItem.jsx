@@ -39,7 +39,7 @@ function ChatItem({
             </Box>
 
             <Stack>
-                <Typography>
+                <Typography marginLeft={"-3rem"}>
                     {name}
                 </Typography>
 
