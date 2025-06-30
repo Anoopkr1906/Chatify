@@ -8,6 +8,8 @@ const Login = lazy( () => import("./pages/Login") ) // Lazy loading
 const Chat = lazy( () => import("./pages/Chat") ) // Lazy loading 
 const Groups = lazy( () => import("./pages/Groups") ) // Lazy loading 
 const NotFound = lazy( () => import("./pages/NotFound") ) // Lazy loading 
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin")) // Lazy loading AdminLogin
+const Dashboard = lazy(() => import("./pages/admin/Dashboard")) // Lazy loading Dashboard
 
 let user = true;
 
@@ -29,6 +31,9 @@ function App() {
             </ProtectRoute>} 
           />
 
+          <Route path="/admin" element={<AdminLogin />}/>
+          <Route path="/admin/dashboard" element={<Dashboard />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
