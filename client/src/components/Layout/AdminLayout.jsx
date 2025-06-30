@@ -48,7 +48,7 @@ const Sidebar = ({w = "100%"}) => {
     }
 
     return (
-        <Stack width={w} direction={"column"} p={"3rem"} spacing={"3rem"} sx={{backgroundImage: bgGradient, height: "100vh"}}>
+        <Stack width={w} direction={"column"} p={"3rem"} spacing={"3rem"} sx={{backgroundImage: bgGradient, height: "100%" }}>
 
             <Typography variant="h5" textTransform={"uppercase"}>Anoop</Typography>
 
