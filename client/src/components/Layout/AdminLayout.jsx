@@ -1,9 +1,19 @@
-import { Close as CloseIcon, Dashboard as DashboardIcon, Groups as GroupsIcon, ManageAccounts as ManageAccountsIcon, Menu as MenuIcon, Message as MessageIcon} from '@mui/icons-material';
+import { Close as CloseIcon, Dashboard as DashboardIcon, ExitToApp as ExitToAppIcon, Groups as GroupsIcon, ManageAccounts as ManageAccountsIcon, Menu as MenuIcon, Message as MessageIcon} from '@mui/icons-material';
 import { Box, Drawer, IconButton, Stack, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import { useLocation } from 'react-router-dom';
-import { Link } from '../styles/StyledComponents';
-import { bgGradient } from '../../constants/color';
+import { useLocation , Link as LinkComponent, Navigate} from 'react-router-dom';
+import { bgGradient, natBlack } from '../../constants/color';
+import { styled } from '@mui/material/styles';
+
+const Link = styled(LinkComponent)`
+    text-decoration: none;
+    color: black;
+    border-radius: 2rem;
+    padding: 1rem 2rem;
+    &:hover{
+    color: rgba(0 , 0 , 0 , 0.54);
+    }
+`
 
 
 const adminTabs = [
@@ -31,7 +41,11 @@ const adminTabs = [
 
 const Sidebar = ({w = "100%"}) => {
 
-    const location = useLocation()
+    const location = useLocation();
+
+    const logoutHandler = () => {
+        console.log("logout");
+    }
 
     return (
         <Stack width={w} direction={"column"} p={"3rem"} spacing={"3rem"} sx={{backgroundImage: bgGradient, height: "100vh"}}>
@@ -41,9 +55,17 @@ const Sidebar = ({w = "100%"}) => {
             <Stack spacing={"1rem"}>
                 {
                     adminTabs.map((tab) => (
-                        <>
+                        
                             <Link key={tab.path} to={tab.path}
-
+                                sx={
+                                    location.pathname === tab.path && {
+                                        bgcolor: natBlack,
+                                        color: "white",
+                                        ":hover":{
+                                            color: "white",
+                                        }
+                                    }
+                                }
                             >
                                 <Stack direction={"row"} spacing={"1rem"} alignItems={"center"}>
                                     {tab.icon}
@@ -53,14 +75,22 @@ const Sidebar = ({w = "100%"}) => {
                                 </Stack>
 
                             </Link>
-                        </>
-                    ))
-                }
+                        
+                    ))}
+
+                    <Link onClick={logoutHandler}>
+                        <Stack direction={"row"} spacing={"1rem"} alignItems={"center"}>
+                            <ExitToAppIcon />
+                            <Typography>Logout</Typography>
+                        </Stack>
+                    </Link>
             </Stack>
 
         </Stack>
     )
 }
+
+const isAdmin = true ;
 
 const AdminLayout = ({ children }) => {
 
@@ -72,6 +102,10 @@ const AdminLayout = ({ children }) => {
 
     const handleClose = () => {
         setIsMobile(false);
+    }
+
+    if(!isAdmin){
+        return <Navigate to="/admin"/>
     }
 
   return (
