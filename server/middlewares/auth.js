@@ -4,7 +4,7 @@ import { TryCatch } from "./error.js";
 
 const isAuthenticated = (req , res , next) => {
 
-    console.log("cookies:",req.cookies);
+    // console.log("cookies:",req.cookies);
     const token = req.cookies["chatify-token"];
 
     if(!token){
