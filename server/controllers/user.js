@@ -1,8 +1,10 @@
 import { compare } from "bcrypt";
 import {User} from "../models/user.js";
-import { cookieOptions, sendToken } from "../utils/features.js";
+import { cookieOptions, emitEvent, sendToken } from "../utils/features.js";
 import { TryCatch } from "../middlewares/error.js";
 import { ErrorHandler } from "../utils/utility.js";
+import { Request } from "../models/request.js";
+import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 
 
 
@@ -48,7 +50,6 @@ const login = TryCatch(async(req , res , next) => {
 });
 
 
-
 const getMyProfile = TryCatch(async(req , res) => {
 
     const user = await User.findById(req.user).select("-password");
@@ -66,14 +67,132 @@ const logout = TryCatch(async(req , res) => {
     })
 })
 
+
 const searchUser = TryCatch(async(req , res) => {
 
     const {name} = req.query;
 
+    // finding all my chats
+    const myChats = await User.find({
+        groupChat: false , 
+        members: req.user ,
+    })
+
+    // all users from my chats means friends or people I have chatted with
+    const allUsersFromMyChats = myChats.map(chat => chat.members).flat();
+
+    // finding all users except me and my friends
+    const allUsersExceptMeAndFriends = await User.find({
+        _id: {$nin: allUsersFromMyChats},
+        name: {$regex: name , $options: "i"},
+    });
+
+    // modifying the user data to return only necessary fields
+    // we will return _id , name and avatar url of the user
+    const users = allUsersExceptMeAndFriends.map(({_id , name , avatar}) => ({
+        _id ,
+        name,
+        avatar: avatar.url
+    }))
+
     return res.status(200).json({
         success: true, 
-        message: name,
+        users,
+    });
+})
+
+
+const sendFriendRequest = TryCatch(async(req , res , next) => {
+
+    const {userId} = req.body;
+
+    const request = await Request.findOne({
+        $or: [
+            {sender: req.user , receiver: userId},
+            {receiver: req.user , sender: userId}
+        ],
+    })
+
+    if(request){
+        return next(new ErrorHandler("Request already sent" , 400))
+    };
+
+    await Request.create({
+        sender: req.user,
+        receiver: userId
+    });
+
+    emitEvent(req , NEW_REQUEST , [userId] );
+
+    return res.status(200).json({
+        success: true, 
+        message: "Friend Request sent",
     })
 })
 
-export {newUser, login , getMyProfile , logout , searchUser};
+const acceptFriendRequest = TryCatch(async(req , res , next) => {
+
+    const {requestId , accept } = req.body ;
+
+    const request = await Request.findById(requestId).populate("sender" , "name").populate("receiver" , "name");
+
+    if(!request){
+        return next(new ErrorHandler("Request not found" , 404));
+    }
+
+    if(request.receiver.toString() !== req.user.toString()){
+        return next(new ErrorHandler("You are not authorized to accept this request" , 401))
+    };
+
+    if(!accept){
+        await request.deleteOne();
+
+        return res.status(200).json({
+            success: true,
+            message: "request deleted successfully",
+        });
+    }
+
+    const members = [request.sender._id , request.receiver._id];
+
+    await Promise.all([
+        Chat.create({
+            members , 
+            name: `${request.sender.name} - ${request.receiver.name}`,
+        }),
+        request.deleteOne(),
+    ]);
+
+
+    emitEvent(req , REFETCH_CHATS , members );
+
+    return res.status(200).json({
+        success: true, 
+        message: "Friend request accepted",
+        senderId: request.sender._id,
+    })
+});
+
+const getMyNotifications = TryCatch(async(req , res , next) => {
+
+    const requests = await Request.find({
+        receiver: req.user,
+    }).populate("sender" , "name avatar");
+
+    const allRequests = requests.map(({_id , sender}) => ({
+        _id,
+        sender:{
+            _id: sender._id,
+            name: sender.name,
+            avatar: sender.avatar.url,
+        }
+    }));
+
+    return res.status(200).json({
+        success: true,
+        requests: allRequests ,
+    })
+});
+
+
+export {newUser, login , getMyProfile , logout , searchUser , sendFriendRequest , acceptFriendRequest , getMyNotifications};
