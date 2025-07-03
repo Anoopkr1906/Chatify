@@ -52,6 +52,10 @@ const acceptRequestValidator = () => [
     body("accept").notEmpty().withMessage("Please add accept").isBoolean().withMessage("Accept must be a boolean"),
 ];
 
+const adminLoginValidator = () => [
+    body("secretKey" , "Please enter a valid secret key").notEmpty(),
+];
+
 
 const validateHandler = (req , res , next) => {
     const errors = validationResult(req);
@@ -78,5 +82,6 @@ export {
     chatIdValidator,
     renameValidator,
     sendRequestValidator,
-    acceptRequestValidator
+    acceptRequestValidator,
+    adminLoginValidator
 }

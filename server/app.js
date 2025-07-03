@@ -1,6 +1,7 @@
 import express from "express"
 import userRoutes from "./routes/user.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 import { connectDB } from "./utils/features.js";
 import dotenv from "dotenv"
 import { errorMiddleware } from "./middlewares/error.js";
@@ -24,6 +25,7 @@ app.use(cookieParser());
 
 app.use("/user" , userRoutes);
 app.use("/chat", chatRoutes);
+app.use("/admin" , adminRoutes)
 
 app.get("/", (req, res) => {
     res.send("Hello from Home")
