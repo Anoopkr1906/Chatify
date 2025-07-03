@@ -4,7 +4,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.js";
 import { User } from "../models/user.js";
 import { Message } from "../models/message.js";
-import { emitEvent } from "../utils/features.js";
+import { deleteFilesFromCloudinary, emitEvent } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
 
 
@@ -279,5 +279,158 @@ const sendAttachments = TryCatch(async(req ,res , next) => {
 })
 
 
+const getChatDetails = TryCatch(async(req , res , next) => {
 
-export {newGroupChat , getMyChats , getMyGroups , addMembers , removeMembers , leaveGroup , sendAttachments};
+    if(req.query.populate === "true"){
+
+        const chat = await Chat.findById(req.params.id)
+            .populate("members" , "name avatar").lean();
+            
+        if(!chat){
+            return next(new ErrorHandler("Chat not found" , 404));
+        }
+        chat.members = chat.members.map(({_id , name , avatar}) => ({
+            _id,
+            name,
+            avatar:avatar.url,
+        }));
+
+
+
+        return res.status(200).json({
+            success: true,
+            chat,
+        });
+
+    }
+    else{
+
+        const chat = await Chat.findById(req.params.id);
+
+        if(!chat){
+            return next(new ErrorHandler("Chat not found" , 404));
+        }
+
+        return res.status(200).json({
+            success: true,
+            chat,
+        });
+    }
+});
+
+
+const renameGroup = TryCatch(async(req , res , next) => {
+
+    const {chaId} = req.params.id;
+    const {name} = req.body;
+
+    const chat = await Chat.findById(chaId);
+
+    if(!chat){
+        return next(new ErrorHandler("Chat not found" , 404));
+    }
+
+    if(!chat.groupChat){
+        return next(new ErrorHandler("This is not a group chat" , 400));
+    };
+
+    if(chat.creator.toString() !== req.user.toString()){
+        return next(new ErrorHandler("U are not allowed to rename group" , 403));
+    };
+
+    await chat.save();
+
+    emitEvent(req , REFETCH_CHATS , chat.members);
+
+    return res.status(200).json({
+        success: true,
+        message: "Group renamed successfully",
+    })
+});
+
+
+const deleteChat = TryCatch(async(req , res , next) => {
+
+    const {chatId} = req.params.id;
+
+    const chat = await Chat.findById(chatId);
+
+    if(!chat){
+        return next(new ErrorHandler("Chat not found" , 404));
+    }
+
+    const members = chat.members ;
+
+    if(chat.groupChat && chat.creator.toString() !== req.user.toString()){
+        return next(new ErrorHandler("U are not allowed to delete the group" , 403));
+    }
+
+    if(!chat.groupChat && !chat.members.includes(req.user.toString())){
+        return next(new ErrorHandler("U are not allowed to delete the group" , 403));
+    }
+
+    // here we have to delete all messsages as well as attachments or files from cloudinary.
+
+    const messagesWithAttachments = await Message.find({
+        chat: chatId,
+        attachments: { $exists: true , $ne : []},
+    });
+
+    const public_ids = [];
+
+    messagesWithAttachments.forEach(({ attachments }) => {
+        attachments.forEach(({ public_id }) => {
+            public_ids.push( public_id );
+        });
+    });
+
+    await Promise.all([
+        // delete from cloudinary
+        deleteFilesFromCloudinary(public_ids),
+
+        chat.deleteOne(),
+
+        Message.deleteMany({chat: chatId}),
+    ])
+
+    emitEvent(req , REFETCH_CHATS , members);
+
+    return res.status(200).json({
+        success: true,
+        message: "Chat delete successfully",
+    })
+});
+
+
+const getMessages = TryCatch(async(req ,res , next) => {
+    const chatId = req.params.id ;
+
+    const {page = 1} = req.query ;
+
+    const resultPerPage = 20 ;
+    const skip = (page-1)*limit ;
+
+    const [messages , totalMessagesCount] = await Promise.all([
+        Message.find({chat : chatId})
+                    .sort({createdAt: -1})
+                    .skip(skip)
+                    .limit(resultPerPage)
+                    .populate("sender", "name avatar")
+                    .lean(),
+        
+        Message.countDocuments({chat: chatId}),
+    ]);
+
+    const totalPages = Math.ceil(totalMessagesCount / resultPerPage);
+
+    return res.status(200).json({
+        success: true,
+        messages : messages.reverse(),
+        totalPages
+    })
+
+})
+
+
+
+export {newGroupChat , getMyChats , getMyGroups , addMembers , removeMembers , leaveGroup , sendAttachments , getChatDetails , renameGroup , deleteChat , getMessages};
