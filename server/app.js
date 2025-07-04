@@ -1,7 +1,4 @@
 import express from "express"
-import userRoutes from "./routes/user.routes.js";
-import chatRoutes from "./routes/chat.routes.js";
-import adminRoutes from "./routes/admin.routes.js";
 import { connectDB } from "./utils/features.js";
 import dotenv from "dotenv"
 import { errorMiddleware } from "./middlewares/error.js";
@@ -14,6 +11,12 @@ import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.js";
 import cors from "cors";
 import {v2 as cloudinary} from "cloudinary"
+import { corsOptions } from "./constants/config.js";
+import { socketAuthenticator } from "./middlewares/auth.js";
+
+import userRoutes from "./routes/user.routes.js";
+import chatRoutes from "./routes/chat.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 dotenv.config({
     path: "./.env"
@@ -34,17 +37,14 @@ cloudinary.config({
 const app = express();
 const server = createServer(app);
 const io = new Server(server , {
-
+    cors: corsOptions,
 })
 
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true })); // Add extended: true
-app.use(cors({
-    origin: ["http://localhost:5173" , "http://localhost:4173" , process.env.CLIENT_URL],
-    credentials: true,
-}));
+app.use(cors(corsOptions));
 
 app.use("/api/v1/user" , userRoutes);
 app.use("/api/v1/chat", chatRoutes);
@@ -55,7 +55,11 @@ app.get("/", (req, res) => {
 })
 
 
-io.use((socket, next) => {}) 
+io.use((socket, next) => {
+    cookieParser()(socket.request , socket.request.res , 
+        async(err) => {await socketAuthenticator(err , socket , next)}
+        );
+}) 
 
 
 io.on("connection" , (socket) => {

@@ -8,6 +8,7 @@ import { server } from './constants/config'
 import ProtectRoute from './components/auth/ProtectRoute'
 import { LayoutLoader } from './components/Layout/Loaders'
 import { userExists, userNotExists } from './redux/reducers/auth' // Importing userNotExists action
+import { SocketProvider } from './Socket'
 
 const Home = lazy( () => import("./pages/Home") ) // Lazy loading Home component
 const Login = lazy( () => import("./pages/Login") ) // Lazy loading 
@@ -42,7 +43,11 @@ const  App = () => {
     <BrowserRouter>
       <Suspense fallback={<LayoutLoader />}>
         <Routes>
-          <Route element={<ProtectRoute user={user}/>}>
+          <Route element={
+            <SocketProvider>
+              <ProtectRoute user={user}/>
+            </SocketProvider>
+          }>
             <Route path="/" element={<Home />} />
             <Route path="/chat/:chatId" element={<Chat />} />
             <Route path="/groups" element={<Groups />} />
