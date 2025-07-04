@@ -64,6 +64,7 @@ const AppLayout = () => (WrappedComponent) => {
 
     const dispatch = useDispatch();
     const { isMobile } = useSelector((state) => state.misc);
+    const { user } = useSelector((state) => state.auth);
 
     const {isLoading , data , isError , error , refetch} = useMyChatsQuery("");
 
@@ -121,7 +122,7 @@ const AppLayout = () => (WrappedComponent) => {
 
           {/* Right Sidebar: hidden on xs and sm, visible on md and up */}
           <div className="hidden md:block md:w-1/4 lg:w-1/4 h-full bg-black bg-opacity-85 p-4 text-white">
-            <Profile />
+            <Profile user={user}/>
           </div>
 
         </div>

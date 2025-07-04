@@ -21,11 +21,11 @@ app.get("/logout" ,isAuthenticated , logout)
 
 app.get("/search" ,isAuthenticated , searchUser)
 
-app.put("/sendRequest" , sendRequestValidator() , validateHandler , sendFriendRequest);
-app.put("/acceptRequest" , acceptRequestValidator() , validateHandler , acceptFriendRequest);
+app.put("/sendRequest" , isAuthenticated, sendRequestValidator() , validateHandler , sendFriendRequest);
+app.put("/acceptRequest" ,isAuthenticated , acceptRequestValidator() , validateHandler , acceptFriendRequest);
 
-app.get("/notifications" , getMyNotifications);
+app.get("/notifications" ,isAuthenticated, getMyNotifications);
 
-app.get("/friends" , getMyFriends)
+app.get("/friends" ,isAuthenticated, getMyFriends)
 
 export default app;

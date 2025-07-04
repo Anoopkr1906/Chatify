@@ -6,7 +6,9 @@ import UserItem from '../components/shared/UserItem';
 import { sampleUsers } from '../constants/sampleData';
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsSearch } from '../redux/reducers/misc';
-import { useLazySearchUserQuery } from '../redux/api/api';
+import { useLazySearchUserQuery, useSendFriendRequestMutation } from '../redux/api/api';
+import toast from 'react-hot-toast';
+import { useAsyncMutation } from '../hooks/hook';
 
 
 const Search = () => {
@@ -15,16 +17,18 @@ const Search = () => {
 
   const [searchUser] = useLazySearchUserQuery("");
 
+  const [sendFriendRequest , isLoadingSendFriendRequest] = useAsyncMutation(useSendFriendRequestMutation);
+
   const dispatch = useDispatch();
 
   const search = useInputValidation("");
 
-  let isLoadingSendFriendRequest = false ;
-  
   const [users , setUsers] = useState([]);
 
-  const addFriendHandler = (id) => {
+  const addFriendHandler = async (id) => {
     console.log(id);
+
+    await sendFriendRequest("Sending Friend req..." , {userId: id});
   }
 
   const searchCloseHandler = () => {
