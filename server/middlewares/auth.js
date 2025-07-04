@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { ErrorHandler } from "../utils/utility.js";
 import { TryCatch } from "./error.js";
 
-const isAuthenticated = (req , res , next) => {
+const isAuthenticated = TryCatch((req , res , next) => {
 
     // console.log("cookies:",req.cookies);
     const token = req.cookies["chatify-token"];
@@ -15,7 +15,7 @@ const isAuthenticated = (req , res , next) => {
     req.user = decodedData._id ;
 
     next();
-}
+})
 
 const isAdminAuthenticated = TryCatch((req, res, next) => {
     const token = req.cookies["chatify-admin-token"];
