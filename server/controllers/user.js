@@ -14,6 +14,9 @@ import {Chat} from "../models/chat.js"
 
 const newUser = TryCatch(async(req, res , next) => {
 
+    console.log("Request body:", req.body);
+    console.log("Request file:", req.file);
+
     const {name , username , password , bio} = req.body;
     const file = req.file ;
 
@@ -21,12 +24,12 @@ const newUser = TryCatch(async(req, res , next) => {
         return next(new ErrorHandler("Please upload avatar" , 400));
     }
 
-    const result = await uploadFilesToCloudinary(file);
+    const result = await uploadFilesToCloudinary([file]);
 
-    // const avatar = {
-    //     public_id: "sample_id",
-    //     url: "https://example.com/sample.jpg"
-    // }
+    const avatar = {
+        public_id: result[0].public_id,
+        url: result[0].url,
+    }
 
     const user = await User.create({
         name,

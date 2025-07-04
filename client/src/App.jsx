@@ -7,7 +7,7 @@ import { Toaster } from "react-hot-toast"
 import { server } from './constants/config'
 import ProtectRoute from './components/auth/ProtectRoute'
 import { LayoutLoader } from './components/Layout/Loaders'
-import { userNotExists } from './redux/reducers/auth' // Importing userNotExists action
+import { userExists, userNotExists } from './redux/reducers/auth' // Importing userNotExists action
 
 const Home = lazy( () => import("./pages/Home") ) // Lazy loading Home component
 const Login = lazy( () => import("./pages/Login") ) // Lazy loading 
@@ -28,9 +28,8 @@ const  App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-
-    axios.get(`${server}/api/v1/user/me`)
-      .then((res) => {console.log(res)})
+    axios.get(`${server}/api/v1/user/me` , {withCredentials: true})
+      .then(({data}) => dispatch(userExists(data.user)))
       .catch((err) => dispatch(userNotExists()));
  
   },[dispatch]);

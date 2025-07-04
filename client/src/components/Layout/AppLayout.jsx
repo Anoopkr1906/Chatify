@@ -48,6 +48,13 @@ import ChatList from "../../specific/ChatList";
 import { sampleChats } from "../../constants/sampleData";
 import { useParams } from "react-router-dom";
 import Profile from "../../specific/Profile";
+import { useMyChatsQuery } from "../../redux/api/api";
+import { Drawer, Skeleton } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsMobile } from "../../redux/reducers/misc";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+import { useErrors } from "../../hooks/hook";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
@@ -55,26 +62,56 @@ const AppLayout = () => (WrappedComponent) => {
     const params = useParams();
     const chatId = params.chatId ;
 
+    const dispatch = useDispatch();
+    const { isMobile } = useSelector((state) => state.misc);
+
+    const {isLoading , data , isError , error , refetch} = useMyChatsQuery("");
+
+    useErrors([{isError , error}]);
+
     const handleDeleteChat = (e , _id , groupChat) => {
       e.preventDefault();
       console.log("Delete chat clicked", _id, groupChat);
+    };
+
+    const handleMobileClose = () => {
+      dispatch(setIsMobile(false));
     }
 
     return (
       <>
         <Header />
+
+        {
+          isLoading ? ( <Skeleton />)
+           : 
+           (
+            <Drawer open={isMobile} onClose={handleMobileClose}>
+              <ChatList 
+                w="70vw"
+
+                chats={data?.chats} 
+                chatId={chatId} 
+                handleDeleteChat={handleDeleteChat}
+              />
+            </Drawer>
+           )
+        }
+
         <div className="w-full h-[calc(100vh-4rem)] flex flex-row">
 
           {/* Left Sidebar: hidden on xs, visible on sm and up */}
           <div className="hidden sm:block sm:w-1/6 md:w-1/4 h-full bg-gray-100">
-            <ChatList chats={sampleChats} chatId={chatId} 
-                // newMessagesAlert={[{
-                //   chatId: chatId,
-                //   count: 4,
-                // },]}
-                onlineUsers={["1" , "2"]}
-                handleDeleteChat={handleDeleteChat}
-            />
+            {
+              isLoading ? (<Skeleton />) :
+              (
+                <ChatList 
+                  chats={data?.chats} 
+                  chatId={chatId} 
+                  handleDeleteChat={handleDeleteChat}
+                />
+              )
+            }
           </div>
 
           {/* Center Content */}

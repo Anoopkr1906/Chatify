@@ -62,7 +62,7 @@ const getMyChats = TryCatch(async(req ,res , next) => {
 
     return res.status(201).json({
         success: true,
-        transformedChats,
+        chats: transformedChats,
     });
 })
 

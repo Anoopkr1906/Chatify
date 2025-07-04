@@ -55,6 +55,11 @@ function Login() {
     const handleSignUp = async (e) => {
         e.preventDefault();
 
+        if (!avatar.file) {
+            toast.error("Please select an avatar");
+            return;
+        }
+
         const formData = new FormData();
         formData.append("avatar" , avatar.file);
         formData.append("name" , name.value);
@@ -62,11 +67,16 @@ function Login() {
         formData.append("username" , username.value);
         formData.append("password" , password.value);
 
+        console.log("Form data:");
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+
         const config = {
             withCredentials: true,
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
+            // headers: {
+            //     "Content-Type": "multipart/form-data"
+            // }
         }
 
         try {
@@ -82,7 +92,9 @@ function Login() {
   return (
     <div
         style={{
-            backgroundImage: "linear-gradient(rgba(215,200,200,0.5) , rgba(170 , 110 ,220 , 0.5))" , 
+            backgroundImage: "linear-gradient(rgba(215,200,200,0.5) , rgba(170 , 110 ,220 , 0.5))" ,
+            minHeight: "100vh",
+            width: "100vw",   
         }}
     >
         <Container component={"main"} maxWidth="xs"
@@ -278,7 +290,7 @@ function Login() {
                                     variant='contained' 
                                     color='primary'
                                     fullWidth 
-                                    type='submit'>
+                                    type="submit">
                                     Sign Up
                                 </Button>
 
