@@ -12,14 +12,19 @@ import {Chat} from "../models/chat.js"
 
 // create a new user and login controller and save in cookie
 
-const newUser = async(req, res , next) => {
+const newUser = TryCatch(async(req, res , next) => {
 
-    const avatar = {
-        public_id: "sample_id",
-        url: "https://example.com/sample.jpg"
-    }
+    // const avatar = {
+    //     public_id: "sample_id",
+    //     url: "https://example.com/sample.jpg"
+    // }
 
     const {name , username , password , bio} = req.body;
+    const file = req.file ;
+
+    if(!file){
+        return next(new ErrorHandler("Please upload avatar" , 400));
+    }
 
     const user = await User.create({
         name,
@@ -31,7 +36,7 @@ const newUser = async(req, res , next) => {
 
     // res.status(201).json({message : "User created successfully"});
     sendToken(res , user , 201 , "User created" );
-}
+});
 
 const login = TryCatch(async(req , res , next) => {
     const {username , password} = req.body ;
