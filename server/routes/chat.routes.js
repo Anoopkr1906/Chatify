@@ -20,7 +20,7 @@ app.delete("/leave/:id" , chatIdValidator() , validateHandler , leaveGroup);
 
 app.post("/message" , attachmentsMulter , sendAttachmentsValidator() , validateHandler , sendAttachments);
 
-app.get("/message/:id" , chatIdValidator() , validateHandler , getMessages)
+app.get("/message/:id" , isAuthenticated , chatIdValidator() , validateHandler , getMessages)
 
 
 app.route("/:id")

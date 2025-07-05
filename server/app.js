@@ -66,10 +66,7 @@ io.on("connection" , (socket) => {
 
     console.log("A user connected" , socket.id);
 
-    const user = {
-        _id: "anoop",
-        name: "Django",
-    };
+    const user = socket.user;
 
     userSocketIDs.set(user._id.toString(), socket.id);
 

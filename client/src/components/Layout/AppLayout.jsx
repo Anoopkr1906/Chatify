@@ -63,8 +63,7 @@ const AppLayout = () => (WrappedComponent) => {
     const params = useParams();
     const chatId = params.chatId ;
 
-    const socket = getSocket();
-    console.log(socket.id); 
+    const socket = getSocket(); 
 
     const dispatch = useDispatch();
     const { isMobile } = useSelector((state) => state.misc);
@@ -121,7 +120,7 @@ const AppLayout = () => (WrappedComponent) => {
 
           {/* Center Content */}
           <div className="w-full sm:w-5/6 md:w-2/4 lg:w-1/2 h-full">
-            <WrappedComponent {...props} />
+            <WrappedComponent {...props} chatId={chatId} user={user}/>
           </div>
 
           {/* Right Sidebar: hidden on xs and sm, visible on md and up */}
