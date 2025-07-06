@@ -49,6 +49,9 @@ import { Link } from '../components/styles/StyledComponents';
 import AvatarCard from '../components/shared/AvatarCard';
 import { sampleChats, sampleUsers } from '../constants/sampleData';
 import UserItem from '../components/shared/UserItem';
+import { useChatDetailsQuery, useMyGroupsQuery } from '../redux/api/api';
+import { useErrors } from '../hooks/hook';
+import { LayoutLoader } from '../components/Layout/Loaders';
 
 const ConfirmDeleteDialogue = lazy(() => import('../dialogues/ConfirmDeleteDialogue'));
 const AddMemberDialogue = lazy(() => import('../dialogues/AddMemberDialogue'));
@@ -57,7 +60,17 @@ const isAddMember = false ;
 
 const Groups = () => {
 
-  const chatId = useSearchParams()[0].get("group");
+  const [searchParams] = useSearchParams();
+  const chatId = searchParams.get("group");
+
+  const navigate = useNavigate();
+
+  const myGroups = useMyGroupsQuery("");
+
+  const groupDetails = useChatDetailsQuery(
+    {chatId , populate: true} , 
+    { skip: !chatId,}
+  )
 
   const [isMobileMenuOpen , setIsMobileMenuOpen] = useState(false);
 
@@ -66,14 +79,44 @@ const Groups = () => {
   const [groupName , setGroupName] = useState("");
   const [groupNameUpdatedValue , setGroupNameUpdatedValue] = useState("");
 
+  const [members , setMembers] = useState([]);
+
   const [confirmDeleteDialog , setConfirmDeleteDialog] = useState(false);
+
+  const errors = [
+    {
+      isError: myGroups.isError,
+      error: myGroups.error
+    },
+    {
+      isError: groupDetails.isError,
+      error: groupDetails.error
+    }
+  ];
+
+  useErrors(errors);
+
+  useEffect(() => {
+
+    if(groupDetails.data) {
+      setGroupName(groupDetails.data.chat.name);
+      setGroupNameUpdatedValue(groupDetails.data.chat.name);
+      setMembers(groupDetails?.data?.chat?.members);
+    }
+
+    return () => {
+      setGroupName("");
+      setGroupNameUpdatedValue("");
+      setMembers([]);
+      setIsEdit(false);
+    }
+
+  },[groupDetails.data])
 
   const handleMobile = () => {
     setIsMobileMenuOpen(prev => !prev)
   }
-
-  const navigate = useNavigate();;
-
+  
   const navigateBack = () => {
     navigate("/");
   }
@@ -203,11 +246,11 @@ const Groups = () => {
                             </Stack>
                         </>
   
-  return (
+  return myGroups.isLoading? <LayoutLoader /> : (
     <div className="flex h-screen">
       {/* Sidebar: hidden on xs, 1/3 width on sm+ */}
       <div className="hidden sm:block sm:w-1/3">
-        <GroupsList myGroups={sampleChats} chatId={chatId}/>
+        <GroupsList myGroups={myGroups?.data?.groups} chatId={chatId}/>
       </div>
 
       {/* Main content: full width on xs, 2/3 width on sm+ */}
@@ -244,7 +287,7 @@ const Groups = () => {
               {/* Members */}
 
               {
-                sampleUsers.map((i) => (
+                members.map((i) => (
                   <UserItem user={i} isAdded
                     styling={{
                       boxShadow: "0 0 0.5rem rgba(0,0,0,0.2)",
@@ -294,7 +337,7 @@ const Groups = () => {
         }}
         open={isMobileMenuOpen} onClose={handleMobileClose}
       >
-        <GroupsList width={"50vw"} myGroups={sampleChats} chatId={chatId}/>
+        <GroupsList w={"50vw"} myGroups={myGroups?.data?.groups} chatId={chatId}/>
       </Drawer>
     </div>
   );

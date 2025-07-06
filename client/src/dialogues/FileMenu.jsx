@@ -39,13 +39,11 @@ const FileMenu = ({anchorE1 , chatId}) => {
     }
 
     dispatch(setUploadingLoader(true));
-
-    const toastId = toast.loading(`Sending ${key}...`);
-
     closeFileMenu();
 
     // fetching here
     try {
+      const toastId = toast.loading(`Sending ${key}...`);
       const myForm = new FormData();
 
       myForm.append("chatId" , chatId);
@@ -55,6 +53,32 @@ const FileMenu = ({anchorE1 , chatId}) => {
 
       if(res.data){
         toast.success(`${key} sent successfully`, {id: toastId});
+
+        // added by me 
+        const fileMessage = {
+                    _id: Date.now().toString(),
+                    attachments: res.data.attachments, // File data from server response
+                    sender: {
+                        _id: user._id,
+                        name: user.name,
+                    },
+                    chat: chatId,
+                    createdAt: new Date().toISOString(),
+                };
+
+                // ✅ Add to local state immediately
+                setMessages(prev => [...prev, fileMessage]);
+
+                // ✅ Emit through socket for real-time
+                socket.emit(NEW_MESSAGE, {
+                    chatId,
+                    members,
+                    message: fileMessage
+                });
+
+                // till here 
+
+
       }else{
         toast.error(`Failed to send ${key}`, {id: toastId});
       };

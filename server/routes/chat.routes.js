@@ -7,26 +7,25 @@ import { addMemberValidator, chatIdValidator, newGroupValidator, removeMemberVal
 
 const app = express.Router();
 
-app.use(isAuthenticated);
 
-app.post("/new" , newGroupValidator() , validateHandler , newGroupChat);
-app.get("/my" , getMyChats)
-app.get("/my/groups" , getMyGroups);
+app.post("/new" ,isAuthenticated ,  newGroupValidator() , validateHandler , newGroupChat);
+app.get("/my" , isAuthenticated ,  getMyChats)
+app.get("/my/groups" , isAuthenticated ,  getMyGroups);
 
-app.put("/addMembers" , addMemberValidator() , validateHandler , addMembers);
-app.put("/removeMembers" , removeMemberValidator() , validateHandler , removeMembers);
+app.put("/addMembers" ,isAuthenticated , addMemberValidator() , validateHandler , addMembers);
+app.put("/removeMembers" ,isAuthenticated ,  removeMemberValidator() , validateHandler , removeMembers);
 
-app.delete("/leave/:id" , chatIdValidator() , validateHandler , leaveGroup);
+app.delete("/leave/:id" , isAuthenticated ,  chatIdValidator() , validateHandler , leaveGroup);
 
-app.post("/message" , attachmentsMulter , sendAttachmentsValidator() , validateHandler , sendAttachments);
+app.post("/message" , isAuthenticated ,  attachmentsMulter , sendAttachmentsValidator() , validateHandler , sendAttachments);
 
 app.get("/message/:id" , isAuthenticated , chatIdValidator() , validateHandler , getMessages)
 
 
 app.route("/:id")
-    .get(chatIdValidator() , validateHandler ,getChatDetails)
-    .put(renameValidator() , validateHandler ,renameGroup)
-    .delete(chatIdValidator() , validateHandler , deleteChat)
+    .get(chatIdValidator() , isAuthenticated , validateHandler ,getChatDetails)
+    .put(renameValidator() , isAuthenticated , validateHandler ,renameGroup)
+    .delete(chatIdValidator() , isAuthenticated , validateHandler , deleteChat)
 
 
 export default app;

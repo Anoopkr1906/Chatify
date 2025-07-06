@@ -8,10 +8,39 @@ const UserItem = ({user , handler , handlerIsLoading , isAdded = false , styling
     const {name , _id , avatar} = user;
 
 
+    // added by me 
+    const getAvatarUrl = (avatar) => {
+        if (!avatar) return '';
+        
+        // If avatar is a string URL
+        if (typeof avatar === 'string') {
+            return transformImage(avatar);
+        }
+        
+        // If avatar is an object with url property
+        if (avatar && typeof avatar === 'object' && avatar.url) {
+            return transformImage(avatar.url);
+        }
+        
+        // If avatar is an array, take the first one
+        if (Array.isArray(avatar) && avatar.length > 0) {
+            const firstAvatar = avatar[0];
+            if (typeof firstAvatar === 'string') {
+                return transformImage(firstAvatar);
+            }
+            if (firstAvatar && firstAvatar.url) {
+                return transformImage(firstAvatar.url);
+            }
+        }
+        
+        return ''; // Return empty string as fallback
+    };
+
+
   return (
     <ListItem >
         <Stack direction={"row"} alignItems={"center"} spacing={"1rem"} width={"100%"} {...styling}>
-            <Avatar src={transformImage(avatar)}/>
+            <Avatar src={getAvatarUrl(avatar)}/>
 
             <Typography
                 variant="body1"

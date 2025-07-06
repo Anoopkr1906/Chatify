@@ -5,7 +5,7 @@ import { errorMiddleware } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import {createServer} from "http"
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT, START_TYPING, STOP_TYPING } from "./constants/events.js";
 import {v4 as uuid} from "uuid"
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.js";
@@ -35,10 +35,14 @@ cloudinary.config({
 })
 
 const app = express();
+
 const server = createServer(app);
+
 const io = new Server(server , {
     cors: corsOptions,
 })
+
+app.set("io" , io);
 
 app.use(express.json());
 app.use(express.urlencoded());
@@ -75,6 +79,8 @@ io.on("connection" , (socket) => {
             content: message,
             _id: uuid(),
             sender:{
+                // _id: user._id,
+                // name: user.name,
                 _id: user._id,
                 name: user.name,
             },
@@ -83,6 +89,7 @@ io.on("connection" , (socket) => {
         }
         const messageForDB = {
             content: message,
+            // sender: user._id,
             sender: user._id,
             chat: chatId,
         };
@@ -95,17 +102,31 @@ io.on("connection" , (socket) => {
         });
 
         io.to(socket.id).emit(NEW_MESSAGE_ALERT , {
-            chatId,
+            chatId
         });
 
         try {
             await Message.create(messageForDB);
         } catch (error) {
-            console.log("Error while saving message to DB", error);
+            throw new Error(error);
         }
 
         console.log("New message received", messageForRealTime); 
     })
+
+    socket.on(START_TYPING , ({members , chatId})=>{
+
+        const membersSockets = getSockets(members);
+
+        socket.to(membersSockets).emit(START_TYPING , {chatId});
+    })
+    socket.on(STOP_TYPING , ({members , chatId})=>{
+
+        const membersSockets = getSockets(members);
+
+        socket.to(membersSockets).emit(STOP_TYPING , {chatId});
+    })
+
     socket.on("disconnect" , () => {
         console.log("User disconnected" , socket.id);
         userSocketIDs.delete(user._id.toString());
