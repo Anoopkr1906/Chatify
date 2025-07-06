@@ -122,6 +122,34 @@ const api = createApi({
             }),
             invalidatesTags: ["Chat"],
         }),
+
+        renameGroup: builder.mutation({
+            query: ({chatId , name}) => ({
+                url: `chat/${chatId}`,
+                method: "PUT",
+                credentials: "include",
+                body: {name},
+            }),
+            invalidatesTags: ["Chat"],
+        }),
+        removeGroupMember: builder.mutation({
+            query: ({chatId , userId}) => ({
+                url: `chat/removeMembers`,
+                method: "PUT",
+                credentials: "include",
+                body: {chatId , userId},
+            }),
+            invalidatesTags: ["Chat"],
+        }),
+        addGroupMember: builder.mutation({
+            query: ({members , chatId}) => ({
+                url: `chat/addMembers`,
+                method: "PUT",
+                credentials: "include",
+                body: {members , chatId},
+            }),
+            invalidatesTags: ["Chat"],
+        }),
         
     })
 
@@ -129,4 +157,6 @@ const api = createApi({
 
 
 export default api;
-export const {useMyChatsQuery , useLazySearchUserQuery , useSendFriendRequestMutation , useGetNotificationsQuery , useAcceptFriendRequestMutation , useChatDetailsQuery , useGetMessagesQuery , useSendAttachmentsMutation , useMyGroupsQuery , useAvailableFriendsQuery , useNewGroupMutation} = api;
+
+
+export const {useMyChatsQuery , useLazySearchUserQuery , useSendFriendRequestMutation , useGetNotificationsQuery , useAcceptFriendRequestMutation , useChatDetailsQuery , useGetMessagesQuery , useSendAttachmentsMutation , useMyGroupsQuery , useAvailableFriendsQuery , useNewGroupMutation , useRenameGroupMutation , useRemoveGroupMemberMutation , useAddGroupMemberMutation} = api;

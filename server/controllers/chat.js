@@ -211,16 +211,17 @@ const removeMembers = TryCatch(async(req , res , next) => {
         return next(new ErrorHandler("Group must have atleast 3 members" , 400));
     }
 
+    const allChatMembers = chat.members.map((i) => i.toString());
+
     chat.members = chat.members.filter(
         (member) => member.toString() !== userId.toString()
     );
-
 
     await chat.save() ;
 
     emitEvent(req , ALERT , chat.members , `${userThatWillBeRemoved.name} has been removed from he group`);
 
-    emitEvent(req , REFETCH_CHATS , chat.members);
+    emitEvent(req , REFETCH_CHATS , allChatMembers);
 
     return res.status(200).json({
         success: true,
@@ -326,10 +327,14 @@ const getChatDetails = TryCatch(async(req , res , next) => {
 
 const renameGroup = TryCatch(async(req , res , next) => {
 
-    const {chaId} = req.params.id;
+    const chatId = req.params.id;
     const {name} = req.body;
 
-    const chat = await Chat.findById(chaId);
+    if (!chatId) {
+        return next(new ErrorHandler("Chat ID is required", 400));
+    }
+
+    const chat = await Chat.findById(chatId);
 
     if(!chat){
         return next(new ErrorHandler("Chat not found" , 404));
@@ -343,6 +348,7 @@ const renameGroup = TryCatch(async(req , res , next) => {
         return next(new ErrorHandler("U are not allowed to rename group" , 403));
     };
 
+    chat.name = name ;
     await chat.save();
 
     emitEvent(req , REFETCH_CHATS , chat.members);
