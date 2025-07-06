@@ -41,14 +41,14 @@
 
 
 import { Delete as DeleteIcon , Add as AddIcon, Done as DoneIcon, Edit as EditIcon, KeyboardBackspace as KeyboardBackspaceIcon, Menu as MenuIcon} from '@mui/icons-material';
-import { Backdrop, Box, Button, Drawer, IconButton, Stack, TextField, Tooltip, Typography } from '@mui/material';
+import { Backdrop, Box, Button, CircularProgress, Drawer, IconButton, Stack, TextField, Tooltip, Typography } from '@mui/material';
 import React , {useState , memo, useEffect, lazy, Suspense} from 'react';
 import { bgGradient, lightBlue, natBlack } from '../constants/color';
 import { useNavigate , useSearchParams} from 'react-router-dom';
 import { Link } from '../components/styles/StyledComponents';
 import AvatarCard from '../components/shared/AvatarCard';
 import UserItem from '../components/shared/UserItem';
-import { useAddGroupMemberMutation, useChatDetailsQuery, useMyGroupsQuery, useRemoveGroupMemberMutation, useRenameGroupMutation } from '../redux/api/api';
+import { useChatDetailsQuery, useDeleteChatMutation, useMyGroupsQuery, useRemoveGroupMemberMutation, useRenameGroupMutation } from '../redux/api/api';
 import { useAsyncMutation, useErrors } from '../hooks/hook';
 import { LayoutLoader } from '../components/Layout/Loaders';
 import { useDispatch, useSelector } from 'react-redux';
@@ -76,7 +76,10 @@ const Groups = () => {
   );
 
   const [updateGroup , isLoadingGroupName] = useAsyncMutation(useRenameGroupMutation);
+
   const [removeMember , isLoadingRemoveMember] = useAsyncMutation(useRemoveGroupMemberMutation);
+
+  const [deleteGroup , isLoadingDeleteGroup] = useAsyncMutation(useDeleteChatMutation);
 
   const [isMobileMenuOpen , setIsMobileMenuOpen] = useState(false);
 
@@ -138,12 +141,10 @@ const Groups = () => {
 
   const openConfirmDeleteHandler = () => {
     setConfirmDeleteDialog(true);
-    console.log("Delete Group");
   }
 
   const closeConfirmDeleteHandler = () => {
     setConfirmDeleteDialog(false);
-    console.log("Close Delete Group Dialog");
   }
 
   const openAddMemberHandler = () => {
@@ -153,9 +154,9 @@ const Groups = () => {
   }
 
   const deleteHandler = () => {
-    console.log("Delete Group Handler");
-    
+    deleteGroup("Deleting group..." , chatId);
     closeConfirmDeleteHandler();
+    navigate("/groups");
   }
 
   const removeMemberHandler = (userId) => {
@@ -296,7 +297,7 @@ const Groups = () => {
             >
               {/* Members */}
 
-              {
+              { isLoadingRemoveMember ? <CircularProgress /> :
                 members.map((i) => (
                   <UserItem user={i} isAdded
                     styling={{

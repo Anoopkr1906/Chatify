@@ -132,6 +132,7 @@ const api = createApi({
             }),
             invalidatesTags: ["Chat"],
         }),
+
         removeGroupMember: builder.mutation({
             query: ({chatId , userId}) => ({
                 url: `chat/removeMembers`,
@@ -141,12 +142,31 @@ const api = createApi({
             }),
             invalidatesTags: ["Chat"],
         }),
+
         addGroupMember: builder.mutation({
             query: ({members , chatId}) => ({
                 url: `chat/addMembers`,
                 method: "PUT",
                 credentials: "include",
                 body: {members , chatId},
+            }),
+            invalidatesTags: ["Chat"],
+        }),
+
+        deleteChat: builder.mutation({
+            query: (chatId) => ({
+                url: `chat/${chatId}`,
+                method: "DELETE",
+                credentials: "include",
+            }),
+            invalidatesTags: ["Chat"],
+        }),
+
+        leaveGroup: builder.mutation({
+            query: (chatId) => ({
+                url: `chat/leave/${chatId}`,
+                method: "DELETE",
+                credentials: "include",
             }),
             invalidatesTags: ["Chat"],
         }),
@@ -159,4 +179,4 @@ const api = createApi({
 export default api;
 
 
-export const {useMyChatsQuery , useLazySearchUserQuery , useSendFriendRequestMutation , useGetNotificationsQuery , useAcceptFriendRequestMutation , useChatDetailsQuery , useGetMessagesQuery , useSendAttachmentsMutation , useMyGroupsQuery , useAvailableFriendsQuery , useNewGroupMutation , useRenameGroupMutation , useRemoveGroupMemberMutation , useAddGroupMemberMutation} = api;
+export const {useMyChatsQuery , useLazySearchUserQuery , useSendFriendRequestMutation , useGetNotificationsQuery , useAcceptFriendRequestMutation , useChatDetailsQuery , useGetMessagesQuery , useSendAttachmentsMutation , useMyGroupsQuery , useAvailableFriendsQuery , useNewGroupMutation , useRenameGroupMutation , useRemoveGroupMemberMutation , useAddGroupMemberMutation , useDeleteChatMutation , useLeaveGroupMutation} = api;
