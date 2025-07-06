@@ -1,18 +1,28 @@
 import { Button, Container, Paper, Typography , TextField, Stack, Avatar, IconButton } from '@mui/material'
 import {CameraAlt as CameraAltIcon} from '@mui/icons-material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useInputValidation } from '6pp'
 import { Navigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { adminLogin, getAdmin } from '../../redux/thunks/admin';
 
-const isAdmin = true ;
 
 const AdminLogin = () => {
+
+    const {isAdmin} = useSelector((state) => state.auth);
+
+    const dispatch = useDispatch();
 
     const secretKey = useInputValidation("")
 
     const submitHandler = (e) => {
         e.preventDefault();
+        dispatch(adminLogin(secretKey.value));
     }
+
+    useEffect(() => {
+        dispatch(getAdmin());
+    },[dispatch])
 
     if(isAdmin){
         return <Navigate to="/admin/dashboard"/>

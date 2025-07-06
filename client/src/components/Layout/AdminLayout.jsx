@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import { useLocation , Link as LinkComponent, Navigate} from 'react-router-dom';
 import { bgGradient, natBlack } from '../../constants/color';
 import { styled } from '@mui/material/styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { adminLogout } from '../../redux/thunks/admin';
 
 const Link = styled(LinkComponent)`
     text-decoration: none;
@@ -43,8 +45,10 @@ const Sidebar = ({w = "100%"}) => {
 
     const location = useLocation();
 
+    const dispatch = useDispatch();
+
     const logoutHandler = () => {
-        console.log("logout");
+        dispatch(adminLogout());
     }
 
     return (
@@ -90,9 +94,9 @@ const Sidebar = ({w = "100%"}) => {
     )
 }
 
-const isAdmin = true ;
-
 const AdminLayout = ({ children }) => {
+
+    const {isAdmin} = useSelector(state => state.auth);
 
     const [isMobile , setIsMobile] = useState(false);
 

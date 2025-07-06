@@ -1,6 +1,6 @@
 import { Button, Container, Paper, Typography , TextField, Stack, Avatar, IconButton } from '@mui/material'
 import {CameraAlt as CameraAltIcon} from '@mui/icons-material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { VisuallyHiddenInput } from '../components/styles/StyledComponents';
 import {useFileHandler, useInputValidation} from "6pp"
 import { usernameValidator } from '../utils/validators';
@@ -9,10 +9,14 @@ import { server } from '../constants/config';
 import { useDispatch } from 'react-redux';
 import { userExists } from '../redux/reducers/auth';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
-function Login() {
+const Login = () => {
 
-    const [isLogin , setIsLogin] = React.useState(true);
+    const navigate = useNavigate() ;
+
+    const [isLogin , setIsLogin] = useState(true);
+    const [isLoading , setIsLoading] = useState(false);
 
     const toggleLogin = () => {
         setIsLogin((prev) => !prev);
@@ -30,6 +34,10 @@ function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
 
+        const toastId = toast.loading("Logging in...");
+
+        setIsLoading(true);
+
         const config = {
             withCredentials: true,
             headers: {
@@ -45,15 +53,25 @@ function Login() {
                 config
                 );
             
-            dispatch(userExists(true));
-            toast.success(data.message);
+            dispatch(userExists(data.user));
+            toast.success(data.message , {
+                id: toastId
+            });
 
         } catch (error) {
-            toast.error(error?.response?.data?.message || "Something went wrong");
+            toast.error(error?.response?.data?.message || "Something went wrong" , {
+                id: toastId
+            });
+        } finally{
+            setIsLoading(false);
         }
     }
     const handleSignUp = async (e) => {
         e.preventDefault();
+
+        const toastId = toast.loading("Signing up...");
+
+        setIsLoading(true);
 
         if (!avatar.file) {
             toast.error("Please select an avatar");
@@ -82,12 +100,19 @@ function Login() {
         try {
             const {data} = await axios.post(`${server}/api/v1/user/new` , formData , config);
 
-            dispatch(userExists(true));
-            toast.success(data.message);
+            dispatch(userExists(data.user));
+            toast.success(data.message , {
+                id: toastId , 
+            });
         } catch (error) {
-            toast.error(error?.response?.data?.message || "Something went wrong");
+            toast.error(error?.response?.data?.message || "Something went wrong" , {
+                id: toastId,
+            });
+        } finally{
+            setIsLoading(false);
         }
     }
+
 
   return (
     <div
@@ -162,19 +187,20 @@ function Login() {
                                     variant='contained' 
                                     color='primary'
                                     fullWidth 
-                                    type='submit'>
+                                    type='submit'
+                                    disabled={isLoading}
+                                >
                                     Login
                                 </Button>
 
                                 <Typography textAlign={"center"} m={"1rem"}>OR</Typography>
 
                                 <Button
-                                    sx={{
-                                        
-                                    }}
                                     fullWidth
                                     variant='text'
-                                    onClick={toggleLogin}>
+                                    onClick={toggleLogin}
+                                    disabled={isLoading}
+                                >
                                         Signup Instead
                                 </Button>
                         </form>
@@ -290,19 +316,20 @@ function Login() {
                                     variant='contained' 
                                     color='primary'
                                     fullWidth 
-                                    type="submit">
+                                    type="submit"
+                                    disabled={isLoading}
+                                >
                                     Sign Up
                                 </Button>
 
                                 <Typography textAlign={"center"} m={"1rem"}>OR</Typography>
 
                                 <Button
-                                    sx={{
-                                        
-                                    }}
                                     fullWidth
                                     variant='text'
-                                    onClick={toggleLogin}>
+                                    onClick={toggleLogin}
+                                    disabled={isLoading}
+                                >
                                         Login Instead
                                 </Button>
                         </form>

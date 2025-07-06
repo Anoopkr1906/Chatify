@@ -156,10 +156,12 @@ const Chat = ({chatId , user}) => {
     setUserTyping(false);
   }, [chatId]);
 
-  const alertListener = useCallback((content) => {
+  const alertListener = useCallback((data) => {
+
+    if(data.chatId !== chatId) return ;
     
     const messageForAlert = {
-      content,
+      content: data.message,
       sender: {
         _id: "hkjwbsv",
         name: "Admin"

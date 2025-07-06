@@ -27,6 +27,7 @@ const sendToken= (res, user , code , message) => {
 
     return res.status(code).cookie("chatify-token" , token , cookieOptions).json({
         success: true,
+        user,
         message,
     });
 };
