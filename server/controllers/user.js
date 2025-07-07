@@ -122,6 +122,20 @@ const sendFriendRequest = TryCatch(async(req , res , next) => {
 
     const {userId} = req.body;
 
+    if (!userId) {
+        return next(new ErrorHandler("User ID is required", 400));
+    }
+
+    if (userId === req.user.toString()) {
+        return next(new ErrorHandler("You cannot send request to yourself", 400));
+    }
+
+    // ✅ Check if user exists
+    const targetUser = await User.findById(userId);
+    if (!targetUser) {
+        return next(new ErrorHandler("User not found", 404));
+    }
+
     const request = await Request.findOne({
         $or: [
             {sender: req.user , receiver: userId},
@@ -132,6 +146,16 @@ const sendFriendRequest = TryCatch(async(req , res , next) => {
     if(request){
         return next(new ErrorHandler("Request already sent" , 400))
     };
+
+    // ✅ Check if already friends
+    const existingChat = await Chat.findOne({
+        members: { $all: [req.user, userId] },
+        groupChat: false
+    });
+
+    if (existingChat) {
+        return next(new ErrorHandler("You are already friends", 400));
+    }
 
     await Request.create({
         sender: req.user,
@@ -179,7 +203,7 @@ const acceptFriendRequest = TryCatch(async(req , res , next) => {
         request.deleteOne(),
     ]);
 
-
+    
     emitEvent(req , REFETCH_CHATS , members );
 
     return res.status(200).json({

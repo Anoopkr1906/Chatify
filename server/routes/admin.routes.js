@@ -12,7 +12,7 @@ import { getAdminData } from "../controllers/admin.js";
 const app = express();
 
 
-app.post("/verify" ,adminLoginValidator() , validateHandler , adminLogin);
+app.post("/verify" , adminLoginValidator() , validateHandler , adminLogin);
 app.get("/logout" , adminLogout);
 
 // Admin routes for fetching data

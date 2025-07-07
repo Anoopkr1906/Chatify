@@ -15,7 +15,7 @@ function Notifications() {
 
   const [acceptRequest] = useAsyncMutation(useAcceptFriendRequestMutation);
 
-  const friendRequestHandler = async ({_id , accept}) => {
+  const friendRequestHandler = async({_id , accept}) => {
 
     dispatch(setIsNotification(false));
 
@@ -47,9 +47,9 @@ function Notifications() {
           (
             <>
               {
-                data?.allRequests.length > 0 ? 
+                data?.allRequests?.length > 0 ? 
                   (<>
-                    {data?.allRequests.map((i) => (
+                    {data?.allRequests?.map((i) => (
                       <NotificationItem sender={i.sender} _id={i._id} handler={friendRequestHandler} key={i._id}/>
                     ))}
                   </>)

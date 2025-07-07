@@ -4,24 +4,44 @@ import moment from 'moment'
 import AdminLayout from '../../components/Layout/AdminLayout'
 import { CurveButton, SearchField } from '../../components/styles/StyledComponents'
 import { DoughnutChart, LineChart } from '../../specific/Charts'
-
-import { useFetchData } from '6pp'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
 import { LayoutLoader } from '../../components/Layout/Loaders'
 import { server } from '../../constants/config'
-import { useErrors } from '../../hooks/hook'
 
 
 
 const Dashboard = () => {
 
-    const {loading , data , error , refetch} = useFetchData(`${server}/api/v1/admin/stats` , "dashboard-stats");
+    //Update your Dashboard.jsx to also use manual fetch for stats
+  // ✅ Manual fetch for dashboard stats
+  const [manualData, setManualData] = useState(null);
+  const [manualLoading, setManualLoading] = useState(true);
+  const [manualError, setManualError] = useState(null);
 
-    const {stats} = data || {};
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("Making manual API call for dashboard stats...");
+        const response = await axios.get(`${server}/api/v1/admin/stats`, {
+          withCredentials: true,
+        });
+        
+        console.log("Manual API response for stats:", response.data);
+        setManualData(response.data);
+      } catch (error) {
+        console.error("Manual API error for stats:", error);
+        setManualError(error);
+      } finally {
+        setManualLoading(false);
+      }
+    };
 
-    useErrors([{
-        isError: error,
-        error: error ,
-    }])
+    fetchData();
+  }, []);
+
+  const loading = manualLoading;
+  const stats = manualData?.stats;
 
     const AppBar = 
                 <Paper 

@@ -13,7 +13,7 @@ app.get("/my" , isAuthenticated ,  getMyChats)
 app.get("/my/groups" , isAuthenticated ,  getMyGroups);
 
 app.put("/addMembers" ,isAuthenticated , addMemberValidator() , validateHandler , addMembers);
-app.put("/removeMembers" ,isAuthenticated ,  removeMemberValidator() , validateHandler , removeMembers);
+app.put("/removeMember" ,isAuthenticated ,  removeMemberValidator() , validateHandler , removeMembers);
 
 app.delete("/leave/:id" , isAuthenticated ,  chatIdValidator() , validateHandler , leaveGroup);
 

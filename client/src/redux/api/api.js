@@ -41,7 +41,7 @@ const api = createApi({
 
         getNotifications: builder.query({
             query: () => ({
-                url: "user/notification",
+                url: `user/notifications`,
                 credentials: "include",
             }),
             keepUnusedDataFor: 0 ,
@@ -135,7 +135,7 @@ const api = createApi({
 
         removeGroupMember: builder.mutation({
             query: ({chatId , userId}) => ({
-                url: `chat/removeMembers`,
+                url: `chat/removeMember`,
                 method: "PUT",
                 credentials: "include",
                 body: {chatId , userId},
@@ -171,7 +171,7 @@ const api = createApi({
             invalidatesTags: ["Chat"],
         }),
         
-    })
+    }),
 
 })
 

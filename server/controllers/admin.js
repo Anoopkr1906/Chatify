@@ -46,7 +46,11 @@ const getAdminData = TryCatch( async(req , res , next) => {
 
 const allUsers = TryCatch(async(req , res , next) => {
 
+    console.log("allUsers endpoint hit"); // ✅ Debug log
+
     const users = await User.find({});
+
+    console.log("Found users count:", users.length); // ✅ Debug log
 
     const transformedUsers = await Promise.all(
         users.map(async({name, username, avatar, _id}) => {
@@ -58,7 +62,7 @@ const allUsers = TryCatch(async(req , res , next) => {
             return {
                 name,
                 username,
-                avatar: avatar.url,
+                avatar: avatar?.url || "",
                 _id,
                 groups,
                 friends
@@ -68,14 +72,18 @@ const allUsers = TryCatch(async(req , res , next) => {
 
 
     return res.status(200).json({
-        status: "success",
+        success: true,
         users: transformedUsers,
     })
 
 });
 
 const allChats = TryCatch(async(req , res , next) => {
+    console.log("allChats endpoint hit"); // ✅ Debug log
+
     const chats = await Chat.find({}).populate("members", "name avatar").populate("creator", "name avatar");
+
+    console.log("Found chats count:", chats.length); // ✅ Debug log
 
     const transformedChats = await Promise.all(
         chats.map(async ({members , _id , groupChat , name , creator}) => {
@@ -90,11 +98,11 @@ const allChats = TryCatch(async(req , res , next) => {
                 members: members.map(({_id , name , avatar}) => ({
                     _id,
                     name,
-                    avatar: avatar.url,
+                    avatar: avatar?.url || "",
                 })),
                 creator: {
                     name: creator?.name || "None",
-                    avatar: creator?.avatar.url || ""
+                    avatar: creator?.avatar?.url || ""
                 },
                 totalMembers: members.length,
                 totalMessages,
@@ -104,27 +112,32 @@ const allChats = TryCatch(async(req , res , next) => {
     );
 
     return res.status(200).json({
-        status: "success",
+        success: true,
         chats: transformedChats,
     })
 })
 
 const allMessages = TryCatch(async(req , res , next) => {
 
-    const messages = await Message.find({}).populate("sender", "name avatar").populate("chat" , "groupChat");
+    console.log("allMessages endpoint hit"); // ✅ Debug log
 
-    const transformedMessages = messages.map(({sender, chat, content , attachments , _id, createdAt}) => ({
+    const messages = await Message.find({}).populate("sender", "name avatar").populate("chat" , "groupChat name");
+
+    console.log("Found messages count:", messages.length); // ✅ Debug log
+
+    const transformedMessages = messages.map(({ content, attachments, _id, sender, createdAt, chat }) => ({
         _id,
-        content,
-        attachments ,
-        sender: {
-            _id: sender._id,
-            name: sender.name,
-            avatar: sender.avatar.url
-        },
+        attachments: attachments || [] ,
+        content : content || "",
+        createdAt,
         chat: chat._id,
-        groupChat: chat.groupChat ,
-        createdAt
+        groupChat: chat?.groupChat || false ,
+        sender: {
+            _id: sender?._id,
+            name: sender?.name,
+            avatar: sender?.avatar?.url || "",
+        },
+        
     }))
 
     return res.status(200).json({
@@ -134,13 +147,13 @@ const allMessages = TryCatch(async(req , res , next) => {
 
 });
 
-const getDashboardStats = TryCatch(async(req , res , next) => {
+const getDashboardStats = TryCatch(async(req , res ) => {
 
     const [groupsCount , usersCount , messagesCount , totalChatsCount ] = await Promise.all([
         Chat.countDocuments({groupChat: true}),
-        User.countDocuments({}),
-        Message.countDocuments({}),
-        Chat.countDocuments({}),
+        User.countDocuments(),
+        Message.countDocuments(),
+        Chat.countDocuments(),
     ]);
 
     const today = new Date();
@@ -169,16 +182,15 @@ const getDashboardStats = TryCatch(async(req , res , next) => {
         usersCount,
         messagesCount,
         totalChatsCount,
-        messagesChart: last7DaysMessages,
+        messagesChart: messages,
     };
 
     return res.status(200).json({
-        status: "success",
+        success: true,
         stats,
     });
 
 }) 
-
 
 
 

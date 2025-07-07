@@ -6,6 +6,7 @@ import Table from '../../components/shared/Table';
 import { server } from '../../constants/config';
 import { useErrors } from '../../hooks/hook';
 import { transformImage } from '../../lib/features';
+import axios from 'axios';
 
 
 
@@ -51,20 +52,72 @@ const columns = [
 
 const UserManagement = () => {
 
-  const {loading , data , error , refetch} = useFetchData(`${server}/api/v1/admin/stats` , "dashboard-users");
+  // const {loading , data , error } = useFetchData(`${server}/api/v1/admin/users` , "dashboard-users");
 
-  useErrors([{
-        isError: error,
-        error: error ,
-  }])
+  // useErrors([{
+  //       isError: error,
+  //       error: error ,
+  // }])
 
-  const [rows , setRows] = useState([]);
+  // const [rows , setRows] = useState([]);
 
-  useEffect( () => {
-    if(data){
-      setRows(data.users.map((i) => ({...i , id:i._id , avatar: transformImage(i.avatar , 50)})))
-    }
-  },[data])
+  // console.log("UserManagement data:", data); // Debug log to check data structure
+
+  // useEffect( () => {
+  //   if(data){
+  //     setRows(data.users.map((i) => ({...i , id:i._id , avatar: transformImage(i.avatar , 50) || ""})))
+  //   }
+  // },[data])
+
+
+  // ✅ Try manual fetch with credentials first to test
+    const [manualData, setManualData] = useState(null);
+    const [manualLoading, setManualLoading] = useState(true);
+    const [manualError, setManualError] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                console.log("Making manual API call...");
+                const response = await axios.get(`${server}/api/v1/admin/users`, {
+                    withCredentials: true, // ✅ Ensure cookies are sent
+                });
+                
+                console.log("Manual API response:", response.data);
+                setManualData(response.data);
+            } catch (error) {
+                console.error("Manual API error:", error);
+                setManualError(error);
+            } finally {
+                setManualLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+
+        // ✅ Use manual data for now
+    const loading = manualLoading;
+    const data = manualData;
+    const error = manualError;
+
+    console.log("UserManagement - loading:", loading);
+    console.log("UserManagement - data:", data);
+    console.log("UserManagement - error:", error);
+
+    const [rows, setRows] = useState([]);
+
+    useEffect(() => {
+        if (data && data.success && data.users) {
+            console.log("Processing users:", data.users);
+            setRows(data.users.map((user) => ({
+                ...user,
+                id: user._id,
+                avatar: transformImage(user.avatar, 50) || "",
+            })));
+        }
+    }, [data]);
 
   return (
     <AdminLayout>

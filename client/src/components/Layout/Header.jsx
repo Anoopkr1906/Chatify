@@ -1,5 +1,5 @@
 import { AppBar, Backdrop, Badge, Box, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
-import React , {Suspense, useState , lazy} from 'react'
+import React , {Suspense , lazy} from 'react'
 import { orange } from '../../constants/color'
 import {Menu as MenuIcon , Search as SearchIcon , Add as AddIcon , Group as GroupIcon , Logout as LogoutIcon , Notifications as NotificationsIcon} from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'

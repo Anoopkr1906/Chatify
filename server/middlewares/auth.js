@@ -22,13 +22,21 @@ const isAuthenticated = TryCatch((req , res , next) => {
 const isAdminAuthenticated = TryCatch((req, res, next) => {
     const token = req.cookies["chatify-admin-token"];
 
+     console.log("Admin auth check - token:", token); // ✅ Debug log
+
     if (!token) {
         return next(new ErrorHandler("Please login as admin to access this route", 401));
     }
 
     const adminId = jwt.verify(token, process.env.JWT_SECRET);
 
+    if (!adminId) {
+        return next(new ErrorHandler("Invalid admin token", 401));
+    }
+
+
     const adminSecretKey = process.env.ADMIN_SECRET_KEY || "Anoop@admin123";
+    console.log("Admin auth check - verified:", adminId); // ✅ Debug log
     const isMatched = adminId === adminSecretKey;
 
     if (!isMatched) {

@@ -24,6 +24,9 @@ const authSlice = createSlice({
 
     extraReducers: (builder) => {
         builder
+            // .addCase(adminLogin.pending, (state) => {
+            //     state.loader = true;
+            // })
             .addCase(adminLogin.fulfilled,(state , action) => {
                 state.isAdmin = true;
                 toast.success(action.payload);
@@ -46,7 +49,6 @@ const authSlice = createSlice({
                 state.isAdmin = true;
                 toast.error(action.error?.message);
             })
-            
     }
 });
 

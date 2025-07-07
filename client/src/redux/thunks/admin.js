@@ -15,7 +15,8 @@ const adminLogin = createAsyncThunk("admin/verify" , async(secretKey) => {
 
         const {data} = await axios.post(`${server}/api/v1/admin/verify` , {secretKey} , config);
         
-        return data.message ;
+        // ✅ Return the entire data object or just the message
+        return data.message || "Admin login successful";
     } catch (error) {
         console.error("Admin login error:", error);
         
@@ -43,9 +44,12 @@ const getAdmin = createAsyncThunk("admin/getAdmin" , async() => {
             withCredentials: true,
         };
 
-        const {data} = await axios.post(`${server}/api/v1/admin/` , config);
+        const {data} = await axios.get(`${server}/api/v1/admin/` , config);
         
-        return data.admin ;
+        console.log("getAdmin response:", data); // Debug log
+        
+        return data;
+        // return data.admin ;
     } catch (error) {
        throw error.response?.data?.message;
     }
@@ -59,7 +63,7 @@ const adminLogout = createAsyncThunk("admin/logout" , async() => {
             withCredentials: true,
         };
 
-        const {data} = await axios.post(`${server}/api/v1/admin/logout` , config);
+        const {data} = await axios.get(`${server}/api/v1/admin/logout` , config);
         
         return data.message ;
     } catch (error) {

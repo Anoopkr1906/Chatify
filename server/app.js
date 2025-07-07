@@ -45,9 +45,8 @@ const io = new Server(server , {
 app.set("io" , io);
 
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true })); // Add extended: true
 app.use(cors(corsOptions));
 
 app.use("/api/v1/user" , userRoutes);
@@ -61,9 +60,9 @@ app.get("/", (req, res) => {
 
 io.use((socket, next) => {
     cookieParser()(socket.request , socket.request.res , 
-        async(err) => {await socketAuthenticator(err , socket , next)}
+        async(err) => await socketAuthenticator(err , socket , next)
         );
-}) 
+});
 
 
 io.on("connection" , (socket) => {
@@ -79,8 +78,6 @@ io.on("connection" , (socket) => {
             content: message,
             _id: uuid(),
             sender:{
-                // _id: user._id,
-                // name: user.name,
                 _id: user._id,
                 name: user.name,
             },
@@ -89,7 +86,6 @@ io.on("connection" , (socket) => {
         }
         const messageForDB = {
             content: message,
-            // sender: user._id,
             sender: user._id,
             chat: chatId,
         };
