@@ -1,14 +1,27 @@
-import React from 'react'
-import AdminLayout from '../../components/Layout/AdminLayout'
-import {Box, Container, Paper, Stack, Typography } from '@mui/material'
-import { AdminPanelSettings as AdminPanelSettingsIcon, Group as GroupIcon, Message as MessageIcon, Notifications as NotificationsIcon, Person as PersonIcon} from '@mui/icons-material'
+import { AdminPanelSettings as AdminPanelSettingsIcon, Group as GroupIcon, Message as MessageIcon, Notifications as NotificationsIcon, Person as PersonIcon } from '@mui/icons-material'
+import { Box, Container, Paper, Stack, Typography } from '@mui/material'
 import moment from 'moment'
+import AdminLayout from '../../components/Layout/AdminLayout'
 import { CurveButton, SearchField } from '../../components/styles/StyledComponents'
 import { DoughnutChart, LineChart } from '../../specific/Charts'
+
+import { useFetchData } from '6pp'
+import { LayoutLoader } from '../../components/Layout/Loaders'
+import { server } from '../../constants/config'
+import { useErrors } from '../../hooks/hook'
 
 
 
 const Dashboard = () => {
+
+    const {loading , data , error , refetch} = useFetchData(`${server}/api/v1/admin/stats` , "dashboard-stats");
+
+    const {stats} = data || {};
+
+    useErrors([{
+        isError: error,
+        error: error ,
+    }])
 
     const AppBar = 
                 <Paper 
@@ -50,12 +63,12 @@ const Dashboard = () => {
                             alignItems={"center"}
                             margin={"2rem 0"}
                         >
-                            <Widget title={"Users"} value={34} Icon={<PersonIcon />}/>
-                            <Widget title={"Chats"} value={3} Icon={<GroupIcon />}/>
-                            <Widget title={"Messages"} value={452} Icon={<MessageIcon />}/>
+                            <Widget title={"Users"} value={stats?.usersCount} Icon={<PersonIcon />}/>
+                            <Widget title={"Chats"} value={stats?.totalChatsCount} Icon={<GroupIcon />}/>
+                            <Widget title={"Messages"} value={stats?.messagesCount} Icon={<MessageIcon />}/>
                         </Stack>
 
-  return (
+  return loading ? <LayoutLoader /> : (
     <AdminLayout>
         <Container component={"main"}>
 
@@ -83,7 +96,7 @@ const Dashboard = () => {
                         Last Messages
                     </Typography>
 
-                    <LineChart value={[15 , 23 , 9 , 56, 17]}/>
+                    <LineChart value={stats?.messagesChart || []}/>
 
                 </Paper>
 
@@ -101,7 +114,7 @@ const Dashboard = () => {
                         maxWidth: "22rem",
                     }}
                 >
-                    <DoughnutChart labels={["Single Chats" , "Group chats"]} value={[23 , 66]}/>
+                    <DoughnutChart labels={["Single Chats" , "Group chats"]} value={[ stats?.totalChatsCount - stats?.groupsCount || 0 , stats?.groupsCount || 0]}/>
 
                     <Stack 
                         position={"absolute"}

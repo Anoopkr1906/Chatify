@@ -31,11 +31,9 @@ const  App = () => {
   useEffect(() => {
     axios.get(`${server}/api/v1/user/me` , {withCredentials: true})
       .then(({data}) => {
-        console.log("User data received:", data.user);
         dispatch(userExists(data.user))
       })
       .catch((err) => {
-        console.log("No user found:", err);
         dispatch(userNotExists())
       });
  

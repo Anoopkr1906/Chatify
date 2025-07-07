@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import AdminLayout from '../../components/Layout/AdminLayout'
-import Table from '../../components/shared/Table'
-import { Avatar, Box, Stack } from '@mui/material';
-import { dashboardData } from '../../constants/sampleData';
-import { fileFormat, transformImage } from '../../lib/features';
+import { useFetchData } from '6pp';
+import { Avatar, Box, Skeleton, Stack } from '@mui/material';
 import moment from 'moment';
-import RenderedAttachment from "../../components/shared/RenderedAttachment"
+import { useEffect, useState } from 'react';
+import AdminLayout from '../../components/Layout/AdminLayout';
+import RenderedAttachment from "../../components/shared/RenderedAttachment";
+import Table from '../../components/shared/Table';
+import { server } from '../../constants/config';
+import { useErrors } from '../../hooks/hook';
+import { fileFormat, transformImage } from '../../lib/features';
 
 
 const columns = [
@@ -87,24 +89,35 @@ const columns = [
 
 function MessageManagement() {
 
+  const {loading , data , error , refetch} = useFetchData(`${server}/api/v1/admin/messages` , "dashboard-messages");
+
+  useErrors([{
+        isError: error,
+        error: error ,
+  }])
+
   const [rows , setRows] = useState([]);
 
   useEffect(() => {
-    setRows(dashboardData.messages.map((i) => ({
-      ...i,
-      id: i._id,
-      sender: {
-        name: i.sender.name,
-        avatar: transformImage(i.sender.avatar, 50)
-      },
-      createdAt: moment(i.createdAt).format("DD/MM/YYYY HH:mm:ss"),
-    })))
-  },[])
+    if(data){
+      setRows(data.messages.map((i) => ({
+        ...i,
+        id: i._id,
+        sender: {
+          name: i.sender.name,
+          avatar: transformImage(i.sender.avatar, 50)
+        },
+        createdAt: moment(i.createdAt).format("DD/MM/YYYY HH:mm:ss"),
+      })))
+    }
+  },[data])
 
 
   return (
     <AdminLayout>
-        <Table heading={"All Messages"} columns={columns} rows={rows} rowHeight={200}/>
+        {loading ? <Skeleton height={"100vh"}/> : (
+          <Table heading={"All Messages"} columns={columns} rows={rows} rowHeight={200}/>
+        )}
     </AdminLayout>
   )
 }

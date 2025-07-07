@@ -5,10 +5,10 @@
   "license": "ISC",
   "author": "",
   "type": "module",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "SET NODE_ENV=PRODUCTION && node app.js",
-    "dev": "SET NODE_ENV=DEVELOPMENT && nodemon app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "dependencies": {
     "@faker-js/faker": "^9.9.0",
