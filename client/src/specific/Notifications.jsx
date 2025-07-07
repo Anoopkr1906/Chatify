@@ -46,16 +46,18 @@ function Notifications() {
           :
           (
             <>
-              {
-                data?.allRequests?.length > 0 ? 
-                  (<>
-                    {data?.allRequests?.map((i) => (
-                      <NotificationItem sender={i.sender} _id={i._id} handler={friendRequestHandler} key={i._id}/>
-                    ))}
-                  </>)
-                  :
-                  (<Typography textAlign={"center"}>No Notifications</Typography>)
-              }
+              {data?.allRequests.length > 0 ? (
+                data?.allRequests?.map(({ sender, _id }) => (
+                  <NotificationItem
+                    sender={sender}
+                    _id={_id}
+                    handler={friendRequestHandler}
+                    key={_id}
+                  />
+                ))
+              ) : (
+                <Typography textAlign={"center"}>0 notifications</Typography>
+              )}
             </>
           )
         }
@@ -84,15 +86,6 @@ const NotificationItem = memo(({ sender , _id , handler }) => {
 
               <Typography
                   variant="body1"
-                  // sx={{
-                  //     flexGrow: 1,
-                  //     display: "-webkit-box",
-                  //     WebKitLineClamp: 1,
-                  //     WebkitBoxOrient: "vertical",
-                  //     overflow: "hidden",
-                  //     textOverflow: "ellipsis",
-                  //     width: "100%",
-                  // }}
                   noWrap
                   sx={{
                     flexGrow: 1,

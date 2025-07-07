@@ -104,15 +104,15 @@ const ChatManagement = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Making manual API call for chats...");
+        // console.log("Making manual API call for chats...");
         const response = await axios.get(`${server}/api/v1/admin/chats`, {
           withCredentials: true, // ✅ Ensure cookies are sent
         });
         
-        console.log("Manual API response for chats:", response.data);
+        // console.log("Manual API response for chats:", response.data);
         setManualData(response.data);
       } catch (error) {
-        console.error("Manual API error for chats:", error);
+        // console.error("Manual API error for chats:", error);
         setManualError(error);
       } finally {
         setManualLoading(false);
@@ -127,15 +127,15 @@ const ChatManagement = () => {
   const data = manualData;
   const error = manualError;
 
-  console.log("ChatManagement - loading:", loading);
-  console.log("ChatManagement - data:", data);
-  console.log("ChatManagement - error:", error);
+  // console.log("ChatManagement - loading:", loading);
+  // console.log("ChatManagement - data:", data);
+  // console.log("ChatManagement - error:", error);
 
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
     if (data && data.success && data.chats) {
-      console.log("Processing chats:", data.chats);
+      // console.log("Processing chats:", data.chats);
       setRows(data.chats.map((chat) => ({
         ...chat,
         id: chat._id,

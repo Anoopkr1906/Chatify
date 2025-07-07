@@ -42,6 +42,11 @@ const io = new Server(server , {
     cors: corsOptions,
 })
 
+app.use(cors({
+    origin: ["http://localhost:5173", "http://localhost:3000"], // ✅ Add your frontend URL
+    credentials: true,
+}));
+
 app.set("io" , io);
 
 app.use(express.json());

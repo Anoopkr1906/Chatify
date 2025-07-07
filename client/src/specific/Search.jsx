@@ -3,21 +3,24 @@ import {Dialog, DialogTitle, Input, InputAdornment, List, ListItem, ListItemText
 import {useInputValidation} from '6pp'
 import { Search as SearchIcon } from '@mui/icons-material'
 import UserItem from '../components/shared/UserItem';
-import { sampleUsers } from '../constants/sampleData';
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsSearch } from '../redux/reducers/misc';
 import { useLazySearchUserQuery, useSendFriendRequestMutation } from '../redux/api/api';
 import toast from 'react-hot-toast';
 import { useAsyncMutation } from '../hooks/hook';
+import axios from 'axios';
+import { server } from '../constants/config'; // ✅ Ensure this matches your backend port
 
 
 const Search = () => {
 
   const {isSearch} = useSelector((state) => state.misc);
 
-  const [searchUser] = useLazySearchUserQuery("");
+  const [searchUser] = useLazySearchUserQuery();
 
-  const [sendFriendRequest , isLoadingSendFriendRequest] = useAsyncMutation(useSendFriendRequestMutation);
+  // const [sendFriendRequest , isLoadingSendFriendRequest] = useAsyncMutation(useSendFriendRequestMutation);
+
+  const [isLoadingSendFriendRequest, setIsLoadingSendFriendRequest] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -26,9 +29,40 @@ const Search = () => {
   const [users , setUsers] = useState([]);
 
   const addFriendHandler = async (id) => {
-    console.log(id);
+    // console.log(id);
 
-    await sendFriendRequest("Sending Friend req..." , {userId: id});
+    // await sendFriendRequest("Sending Friend req..." , {userId: id});
+
+    try {
+            console.log("Sending friend request to ID:", id);
+            setIsLoadingSendFriendRequest(true);
+
+            const response = await axios.put(
+                `${server}/api/v1/user/sendRequest`,
+                { userId: id },
+                {
+                    withCredentials: true,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                }
+            );
+
+            console.log("Friend request response:", response.data);
+            toast.success(response.data.message || "Friend request sent successfully");
+
+        } catch (error) {
+            console.error("Friend request error:", error);
+            
+            if (error.response) {
+                console.error("Error response:", error.response.data);
+                toast.error(error.response.data.message || "Failed to send friend request");
+            } else {
+                toast.error("Network error occurred");
+            }
+        } finally {
+            setIsLoadingSendFriendRequest(false);
+        }
   }
 
   const searchCloseHandler = () => {

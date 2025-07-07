@@ -78,12 +78,12 @@ const UserManagement = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log("Making manual API call...");
+                // console.log("Making manual API call...");
                 const response = await axios.get(`${server}/api/v1/admin/users`, {
                     withCredentials: true, // ✅ Ensure cookies are sent
                 });
                 
-                console.log("Manual API response:", response.data);
+                // console.log("Manual API response:", response.data);
                 setManualData(response.data);
             } catch (error) {
                 console.error("Manual API error:", error);
@@ -102,15 +102,15 @@ const UserManagement = () => {
     const data = manualData;
     const error = manualError;
 
-    console.log("UserManagement - loading:", loading);
-    console.log("UserManagement - data:", data);
-    console.log("UserManagement - error:", error);
+    // console.log("UserManagement - loading:", loading);
+    // console.log("UserManagement - data:", data);
+    // console.log("UserManagement - error:", error);
 
     const [rows, setRows] = useState([]);
 
     useEffect(() => {
         if (data && data.success && data.users) {
-            console.log("Processing users:", data.users);
+            // console.log("Processing users:", data.users);
             setRows(data.users.map((user) => ({
                 ...user,
                 id: user._id,

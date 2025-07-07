@@ -22,15 +22,15 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Making manual API call for dashboard stats...");
+        // console.log("Making manual API call for dashboard stats...");
         const response = await axios.get(`${server}/api/v1/admin/stats`, {
           withCredentials: true,
         });
         
-        console.log("Manual API response for stats:", response.data);
+        // console.log("Manual API response for stats:", response.data);
         setManualData(response.data);
       } catch (error) {
-        console.error("Manual API error for stats:", error);
+        // console.error("Manual API error for stats:", error);
         setManualError(error);
       } finally {
         setManualLoading(false);
