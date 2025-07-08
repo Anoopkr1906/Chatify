@@ -170,7 +170,9 @@ const AppLayout = () => (WrappedComponent) => {
           </div>
 
           {/* Right Sidebar: hidden on xs and sm, visible on md and up */}
-          <div className="hidden md:block md:w-1/4 lg:w-1/4 h-full bg-black bg-opacity-85 p-4 text-white">
+          <div className="hidden md:block md:w-1/4 lg:w-1/4 h-full bg-opacity-85 p-4 text-white"
+            style={{backgroundImage: "linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(55, 65, 81, 0.8), rgba(75, 85, 99, 0.8))"}}
+          >
             <Profile user={user}/>
           </div>
 

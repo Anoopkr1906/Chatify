@@ -33,23 +33,24 @@ const AdminLogin = () => {
   return (
     <div
         style={{
-            backgroundImage: "linear-gradient(rgba(215,200,200,0.5) , rgba(170 , 110 ,220 , 0.5))" , 
+            backgroundImage: "linear-gradient(rgba(215,200,200,0.5) , rgba(170 , 110 ,220 , 0.5))" ,
+            minHeight: '100vh',  
+            display: 'flex',
+            alignItems: 'center', 
+            justifyContent: 'center' 
         }}
     >
         <Container component={"main"} maxWidth="xs"
-            sx={{
-                display: 'flex',  
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                height: '100vh'
-            }}>
+        >
             <Paper 
                 elevation={3} 
                 sx={{
                     padding: 4, 
                     display: 'flex', 
                     flexDirection: 'column', 
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    borderRadius: "2rem",
+                    backgroundImage: "linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(55, 65, 81, 0.8), rgba(75, 85, 99, 0.6))",
                 }}>
                         
                         <>

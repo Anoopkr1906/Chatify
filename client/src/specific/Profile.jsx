@@ -28,7 +28,7 @@ const Profile = ({user}) => {
   };
 
   return (
-    <div>
+    <div >
       <Stack spacing={"1rem"} direction={"column"} alignItems={"center"}>
         <Avatar 
           src={transformImage(safeUser.avatar.url)}
