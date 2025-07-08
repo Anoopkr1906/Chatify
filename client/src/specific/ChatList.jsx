@@ -29,32 +29,43 @@ function ChatList({
     ],
     handleDeleteChat,
 }) {
+
+  // Safety check for chats array
+  const safeChats = Array.isArray(chats) ? chats : [];
+
   return (
     <Stack width={w} direction={"column"} overflow={"auto"} height={"100%"} sx={{
         backgroundImage: bgGradient
     }}>
 
         {
-            chats?.map((data , index) => {
+            safeChats?.map((data , index) => {
+
+                if (!data || typeof data !== 'object') {
+                    return null; // Skip invalid data
+                }
 
                 const {avatar , _id , name , groupChat , members} = data ;
+
+                // Ensure we have valid data
+                if (!_id) return null;
 
                 const newMessageAlert = newMessagesAlert.find(
                     ({chatId}) => chatId === _id
                 );
 
-                const isOnline = members?.some((member) => onlineUsers.includes(_id))
+                const isOnline = Array.isArray(members) ? members?.some((member) => onlineUsers.includes(_id)) : false;
                 
                 return (
                     <ChatItem
                         index={index}
                         newMessageAlert={newMessageAlert} 
                         isOnline={isOnline} 
-                        avatar ={avatar}
-                        name = {name}
-                        _id = {_id}
-                        key = {_id}
-                        groupChat = {groupChat}
+                        avatar={Array.isArray(avatar) ? avatar : []}
+                        name={typeof name === 'string' ? name : 'Unknown'}
+                        _id={_id}
+                        key={_id}
+                        groupChat={Boolean(groupChat)}
                         sameSender={chatId === _id}
                         handleDeleteChat={handleDeleteChat}
                     />

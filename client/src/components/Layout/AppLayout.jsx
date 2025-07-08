@@ -92,6 +92,13 @@ const AppLayout = () => (WrappedComponent) => {
       deleteMenuAnchor.current = e.currentTarget;
     };
 
+    // modification done by me
+    useEffect(() => {
+      if (user) {
+        refetch();
+      }
+    }, [user?._id, refetch]); // Watch for user ID changes
+
     const handleMobileClose = () => {
       dispatch(setIsMobile(false));
     }
@@ -99,7 +106,7 @@ const AppLayout = () => (WrappedComponent) => {
     const newMessageALertListener = useCallback((data) => {
       if(data.chatId == chatId) return;
       dispatch(setNewMessagesAlert(data));
-    },[chatId]);
+    },[chatId , dispatch]);
 
     const newRequestListener = useCallback(() => {
       dispatch(incrementNotification())
@@ -131,10 +138,10 @@ const AppLayout = () => (WrappedComponent) => {
             <Drawer open={isMobile} onClose={handleMobileClose}>
               <ChatList 
                 w="70vw"
-                chats={data?.chats} 
+                chats={data?.chats || []} 
                 chatId={chatId} 
                 handleDeleteChat={handleDeleteChat}
-                newMessagesAlert={newMessagesAlert}
+                newMessagesAlert={newMessagesAlert || []}
               />
             </Drawer>
            )
@@ -148,10 +155,10 @@ const AppLayout = () => (WrappedComponent) => {
               isLoading ? (<Skeleton />) :
               (
                 <ChatList 
-                  chats={data?.chats} 
+                  chats={data?.chats || []} 
                   chatId={chatId} 
                   handleDeleteChat={handleDeleteChat}
-                  newMessagesAlert={newMessagesAlert}
+                  newMessagesAlert={newMessagesAlert || []}
                 />
               )
             }

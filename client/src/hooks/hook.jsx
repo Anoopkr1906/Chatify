@@ -10,7 +10,22 @@ const useErrors = (errors = []) => {
                 if(fallback) {
                     fallback();
                 }
-                else toast.error(error?.data?.message || "Something went wrong");
+                else {
+                    // Ensure we always display a string message
+                    let errorMessage = "Something went wrong";
+                    
+                    if (error?.data?.message) {
+                        errorMessage = typeof error.data.message === 'string' 
+                            ? error.data.message 
+                            : JSON.stringify(error.data.message);
+                    } else if (error?.message) {
+                        errorMessage = typeof error.message === 'string' 
+                            ? error.message 
+                            : JSON.stringify(error.message);
+                    }
+                    
+                    toast.error(errorMessage);
+                }
             }
         })
 

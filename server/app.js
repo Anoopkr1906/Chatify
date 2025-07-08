@@ -24,7 +24,7 @@ dotenv.config({
 
 const userSocketIDs = new Map();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000 || 3001;
 
 connectDB(process.env.MONGO_URI);
 

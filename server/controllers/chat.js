@@ -35,8 +35,10 @@ const newGroupChat = TryCatch(async(req ,res , next) => {
 
 
 const getMyChats = TryCatch(async(req ,res , next) => {
-
-    console.log("getMyChats called for user:", req.user); // ✅ Debug log
+    
+    if (!req.user) {
+        return next(new ErrorHandler("User not authenticated", 401));
+    }
     
     const chats = await Chat.find({members: req.user}).populate(
         "members",
@@ -49,9 +51,9 @@ const getMyChats = TryCatch(async(req ,res , next) => {
 
         return {
             _id ,
-            name: groupChat? name : otherMember.name,
+            name: groupChat? name : otherMember?.name || "Unknown",
             groupChat ,
-            avatar: groupChat ? members.slice(0,3).map(({avatar}) => avatar.url) : [otherMember.avatar.url],
+            avatar: groupChat ? members.slice(0,3).map(({avatar}) => avatar?.url || "") : [otherMember?.avatar?.url || ""],
             members:members.reduce((prev , curr) => {
                 if(curr._id.toString() !== req.user.toString()){
                     prev.push(curr._id)
@@ -63,7 +65,7 @@ const getMyChats = TryCatch(async(req ,res , next) => {
         }
     })
 
-    return res.status(201).json({
+    return res.status(200).json({
         success: true,
         chats: transformedChats,
     });

@@ -1,7 +1,7 @@
 import { AppBar, Backdrop, Badge, Box, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
 import React , {Suspense , lazy} from 'react'
 import { orange } from '../../constants/color'
-import {Menu as MenuIcon , Search as SearchIcon , Add as AddIcon , Group as GroupIcon , Logout as LogoutIcon , Notifications as NotificationsIcon} from '@mui/icons-material'
+import {Menu as MenuIcon , AdminPanelSettings as AdminIcon  , Search as SearchIcon , Add as AddIcon , Group as GroupIcon , Logout as LogoutIcon , Notifications as NotificationsIcon} from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { server } from '../../constants/config'
@@ -40,6 +40,12 @@ const Header = () => {
     const navigateToGroups = () => {
         navigate("/groups")
     }
+
+    const openAdminPanel = () => {
+        navigate("/admin")
+    }
+
+
     const handleLogout = async() => {
         console.log("Logout clicked");
         try {
@@ -102,6 +108,12 @@ const Header = () => {
                             icon={<NotificationsIcon />}
                             onClick={openNotification}
                             value={notificationCount}
+                        />
+                        <IconBtn 
+                            title={"Admin Panel"}
+                            icon={<AdminIcon />}
+                            onClick={openAdminPanel}
+                            
                         />
                         <IconBtn 
                             title={"Logout"}

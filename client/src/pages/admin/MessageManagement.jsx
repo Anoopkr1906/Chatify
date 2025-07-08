@@ -225,9 +225,10 @@ function MessageManagement() {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    if (data && data.success && data.messages) {
-      console.log("Processing messages:", data.messages);
-      setRows(data.messages.map((message) => ({
+    if (data && data.success && data.message) {
+      console.log("Processing messages:", data.message);
+      const messages = data.message;
+      setRows(messages.map((message) => ({
         ...message,
         id: message._id,
         sender: {

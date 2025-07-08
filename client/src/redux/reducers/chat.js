@@ -27,7 +27,7 @@ const chatSlice = createSlice({
             const chatId = action.payload.chatId ;
 
             const index = state.newMessagesAlert.find(
-                (item) => item.chatId === action.payload.chatId 
+                (item) => item.chatId === chatId, 
             );
 
             if(index != -1){

@@ -2,7 +2,7 @@ import { Button, Container, Paper, Typography , TextField, Stack, Avatar, IconBu
 import {CameraAlt as CameraAltIcon} from '@mui/icons-material'
 import React, { useEffect } from 'react'
 import { useInputValidation } from '6pp'
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { adminLogin, getAdmin } from '../../redux/thunks/admin';
 
@@ -12,6 +12,8 @@ const AdminLogin = () => {
     const {isAdmin} = useSelector((state) => state.auth);
 
     const dispatch = useDispatch();
+
+    const navigate = useNavigate();
 
     const secretKey = useInputValidation("")
 
@@ -80,6 +82,18 @@ const AdminLogin = () => {
                                     fullWidth 
                                     type='submit'>
                                     Login
+                                </Button>
+                                <Button 
+                                    sx={{
+                                        marginTop: "1rem",
+                                    }}
+                                    variant='contained' 
+                                    color='error'
+                                    fullWidth 
+                                    type='submit'
+                                    onClick={() => navigate("/")}
+                                >
+                                    Go back to home
                                 </Button>
 
                         </form>
