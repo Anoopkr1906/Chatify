@@ -6,7 +6,8 @@ const api = createApi({
 
     reducerPath: "api",
     baseQuery: fetchBaseQuery({
-        baseUrl: `${server}/api/v1/` 
+        baseUrl: `${server}/api/v1/` ,
+        credentials: "include"
     }),
 
     tagTypes: ["Chat" , "User" , "Message"],
@@ -39,9 +40,9 @@ const api = createApi({
             invalidatesTags: ["User"],
         }),
 
-        getNotifications: builder.query({
+        getMyNotifications: builder.query({
             query: () => ({
-                url: `user/notifications`,
+                url: `user/my/notifications`,
                 credentials: "include",
             }),
             keepUnusedDataFor: 0 ,
@@ -53,6 +54,7 @@ const api = createApi({
                 method: "PUT",
                 credentials: "include",
                 body: data,
+                credentials: "include",
             }),
             invalidatesTags: ["Chat"],
         }),
@@ -179,4 +181,4 @@ const api = createApi({
 export default api;
 
 
-export const {useMyChatsQuery , useLazySearchUserQuery , useSendFriendRequestMutation , useGetNotificationsQuery , useAcceptFriendRequestMutation , useChatDetailsQuery , useGetMessagesQuery , useSendAttachmentsMutation , useMyGroupsQuery , useAvailableFriendsQuery , useNewGroupMutation , useRenameGroupMutation , useRemoveGroupMemberMutation , useAddGroupMemberMutation , useDeleteChatMutation , useLeaveGroupMutation} = api;
+export const {useMyChatsQuery , useLazySearchUserQuery , useSendFriendRequestMutation , useGetMyNotificationsQuery , useAcceptFriendRequestMutation , useChatDetailsQuery , useGetMessagesQuery , useSendAttachmentsMutation , useMyGroupsQuery , useAvailableFriendsQuery , useNewGroupMutation , useRenameGroupMutation , useRemoveGroupMemberMutation , useAddGroupMemberMutation , useDeleteChatMutation , useLeaveGroupMutation} = api;

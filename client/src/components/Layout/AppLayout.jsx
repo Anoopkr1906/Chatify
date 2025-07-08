@@ -45,7 +45,6 @@
 import React, { useCallback, useEffect } from "react";
 import Header from "./Header";
 import ChatList from "../../specific/ChatList";
-import { sampleChats } from "../../constants/sampleData";
 import { useNavigate, useParams } from "react-router-dom";
 import Profile from "../../specific/Profile";
 import { useMyChatsQuery } from "../../redux/api/api";

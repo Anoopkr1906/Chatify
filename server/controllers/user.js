@@ -89,13 +89,15 @@ const searchUser = TryCatch(async(req , res) => {
     const {name} = req.query;
 
     // finding all my chats
-    const myChats = await User.find({
+
+    // changed from it's using User.find() instead of Chat.find():
+    const myChats = await Chat.find({
         groupChat: false , 
         members: req.user ,
     })
 
     // all users from my chats means friends or people I have chatted with
-    const allUsersFromMyChats = myChats.map(chat => chat.members).flat();
+    const allUsersFromMyChats = myChats.flatMap(chat => chat.members);
 
     // finding all users except me and my friends
     const allUsersExceptMeAndFriends = await User.find({
@@ -108,7 +110,7 @@ const searchUser = TryCatch(async(req , res) => {
     const users = allUsersExceptMeAndFriends.map(({_id , name , avatar}) => ({
         _id ,
         name,
-        avatar: avatar.url
+        avatar: avatar?.url || "",
     }))
 
     return res.status(200).json({
@@ -215,23 +217,31 @@ const acceptFriendRequest = TryCatch(async(req , res , next) => {
 
 const getMyNotifications = TryCatch(async(req , res , next) => {
 
-    const requests = await Request.find({
-        receiver: req.user,
-    }).populate("sender" , "name avatar");
+    console.log("getMyNotifications called for user:", req.user); // ✅ Debug log
 
-    const allRequests = requests.map(({_id , sender}) => ({
-        _id,
-        sender:{
-            _id: sender._id,
-            name: sender.name,
-            avatar: sender.avatar.url,
-        }
-    }));
+    try {
+        const requests = await Request.find({ receiver: req.user })
+            .populate("sender", "name avatar");
 
-    return res.status(200).json({
-        success: true,
-        requests: allRequests ,
-    })
+        console.log("Found requests:", requests); // ✅ Debug log
+
+        const allRequests = requests.map(({ _id, sender }) => ({
+            _id,
+            sender: {
+                _id: sender._id,
+                name: sender.name,
+                avatar: sender.avatar?.url || "", // ✅ Handle null avatar
+            },
+        }));
+
+        return res.status(200).json({
+            success: true,
+            requests: allRequests,
+        });
+    } catch (error) {
+        console.error("getMyNotifications error:", error); // ✅ Debug log
+        return next(new ErrorHandler("Failed to get notifications", 500));
+    }
 });
 
 
@@ -246,12 +256,17 @@ const getMyFriends = TryCatch(async(req , res , next) => {
 
     const friends = chats.map(({members}) => {
         const otherUser = getOtherMember(members , req.user);
+
+        // ✅ FIX: Add null check and handle missing avatar
+        if (!otherUser) {
+            return null;
+        }
         return {
             _id: otherUser._id,
             name: otherUser.name,
-            avatar: otherUser.avatar.url
+            avatar: otherUser.avatar?.url || "" ,
         };
-    });
+    }).filter(Boolean);
 
     if(chatId){
         const chat = await Chat.findById(chatId);

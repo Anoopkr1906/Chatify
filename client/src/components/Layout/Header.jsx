@@ -33,9 +33,9 @@ const Header = () => {
         dispatch(setIsNewGroup(true));
     }
     const openNotification = () => {
+        console.log("Opening notifications"); // ✅ Debug log
         dispatch(setIsNotification(true));
         dispatch(resetNotificationCount());
-
     }
     const navigateToGroups = () => {
         navigate("/groups")

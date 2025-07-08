@@ -35,6 +35,9 @@ const newGroupChat = TryCatch(async(req ,res , next) => {
 
 
 const getMyChats = TryCatch(async(req ,res , next) => {
+
+    console.log("getMyChats called for user:", req.user); // ✅ Debug log
+    
     const chats = await Chat.find({members: req.user}).populate(
         "members",
         "name username avatar"

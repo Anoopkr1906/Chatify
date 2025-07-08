@@ -29,8 +29,4 @@ const TryCatch = (passedFunction) => async(req , res , next) =>{
 }
 
 
-
-
-
-
 export {errorMiddleware , TryCatch};

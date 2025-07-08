@@ -2,25 +2,33 @@ import { Avatar, Button, Dialog, DialogTitle, ListItem, Skeleton, Stack, Typogra
 import { memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAsyncMutation, useErrors } from '../hooks/hook';
-import { useAcceptFriendRequestMutation, useGetNotificationsQuery } from '../redux/api/api';
+import { useAcceptFriendRequestMutation, useGetMyNotificationsQuery } from '../redux/api/api';
 import { setIsNotification } from '../redux/reducers/misc';
+import toast from 'react-hot-toast';
 
-function Notifications() {
+const Notifications = () => {
 
   const dispatch = useDispatch();
 
   const {isNotification} = useSelector((state) => state.misc)
 
-  const {isLoading , data , error , isError} = useGetNotificationsQuery(); 
+  const {data , error , isLoading  , isError} = useGetMyNotificationsQuery(); 
 
   const [acceptRequest] = useAsyncMutation(useAcceptFriendRequestMutation);
 
-  const friendRequestHandler = async({_id , accept}) => {
+  console.log("Notifications data:", data); // ✅ Debug log
+  console.log("Is notification open:", isNotification); // ✅ Debug log
 
-    dispatch(setIsNotification(false));
-
-    await acceptRequest("Accepting..." ,{requestId: _id , accept});
+  const friendRequestHandler = async ({ _id, accept }) => {
+        dispatch(setIsNotification(false));
+        try {
+            await acceptRequest("Accepting...", { requestId: _id, accept });
+            toast.success(accept ? "Friend request accepted" : "Friend request rejected");
+        } catch (error) {
+            toast.error("Failed to process friend request");
+        }
   };
+
 
   const closeHandler = () => {
     dispatch(setIsNotification(false));
@@ -46,8 +54,8 @@ function Notifications() {
           :
           (
             <>
-              {data?.allRequests.length > 0 ? (
-                data?.allRequests?.map(({ sender, _id }) => (
+              {Array.isArray(data?.requests) && data.requests.length > 0 ? (
+                data.requests.map(({ sender, _id }) => (
                   <NotificationItem
                     sender={sender}
                     _id={_id}
@@ -82,7 +90,7 @@ const NotificationItem = memo(({ sender , _id , handler }) => {
         <Stack direction={"row"} alignItems={"center"} spacing={"1rem"} width={"100%"}
             
           >
-              <Avatar />
+              <Avatar src={avatar}/>
 
               <Typography
                   variant="body1"

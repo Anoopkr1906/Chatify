@@ -24,7 +24,7 @@ app.get("/search" ,isAuthenticated , searchUser)
 app.put("/sendRequest" , isAuthenticated, sendRequestValidator() , validateHandler , sendFriendRequest);
 app.put("/acceptRequest" ,isAuthenticated , acceptRequestValidator() , validateHandler , acceptFriendRequest);
 
-app.get("/notifications" ,isAuthenticated, getMyNotifications);
+app.get("/my/notifications" ,isAuthenticated, getMyNotifications);
 
 app.get("/friends" ,isAuthenticated, getMyFriends)
 
