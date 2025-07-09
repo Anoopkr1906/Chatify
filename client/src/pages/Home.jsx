@@ -5,8 +5,8 @@ import { grayColor } from '../constants/color'
 
 function Home() {
   return (
-    <Box bgcolor={grayColor} height={"100%"} >
-      <Typography p={"2rem"} variant="h5" textAlign={"center"}>
+    <Box bgcolor={grayColor} height={"100%"}>
+      <Typography p={"2rem"} variant="h4" textAlign={"center"}>
         Select a friend to chat
       </Typography>
     </Box>

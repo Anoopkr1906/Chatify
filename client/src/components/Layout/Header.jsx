@@ -1,7 +1,7 @@
 import { AppBar, Backdrop, Badge, Box, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
 import React , {Suspense , lazy} from 'react'
-import { orange } from '../../constants/color'
-import {Menu as MenuIcon , AdminPanelSettings as AdminIcon  , Search as SearchIcon , Add as AddIcon , Group as GroupIcon , Logout as LogoutIcon , Notifications as NotificationsIcon} from '@mui/icons-material'
+import { blueGray } from '../../constants/color'
+import {Menu as MenuIcon , AdminPanelSettings as AdminIcon  , Search as SearchIcon , Add as AddIcon , Group as GroupIcon , Logout as LogoutIcon , Notifications as NotificationsIcon, GitHub, LinkedIn} from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { server } from '../../constants/config'
@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { userNotExists } from '../../redux/reducers/auth'
 import { setIsMobile, setIsNewGroup, setIsNotification, setIsSearch } from '../../redux/reducers/misc'
 import { resetNotificationCount } from '../../redux/reducers/chat'
+import ThemeToggle from '../shared/ThemeToggle'
+
 
 const SearchDialogue = lazy(() => import('../../specific/Search'));
 const NotificationDialogue = lazy(() => import('../../specific/Notifications'));
@@ -20,8 +22,19 @@ const Header = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const linkedinUrl = "https://www.linkedin.com/in/anoop-kumar-burnwal-aa0b10318/"; // Replace with your LinkedIn URL
+    const githubUrl = "https://github.com/Anoopkr1906"; // Replace with your GitHub URL
+
     const {isSearch , isNotification , isNewGroup} = useSelector((state) => state.misc)
     const {notificationCount} = useSelector((state) => state.chat)
+
+    const openLinkedIn = () => {
+        window.open(linkedinUrl, '_blank');
+    }
+
+    const openGitHub = () => {
+        window.open(githubUrl, '_blank');
+    }
 
     const handleMobile = () => {
         dispatch(setIsMobile(true));
@@ -62,20 +75,71 @@ const Header = () => {
   return (
     <>
         <Box sx={{flexGrow: 1}} height={"4rem"}>
-            <AppBar position='static' sx={{bgcolor: orange}}>
+            <AppBar position='static' sx={{bgcolor: blueGray}}>
                 <Toolbar>
 
-                    <Typography variant='h6' sx={{
+                    {/* <Typography variant='h6' sx={{
                         display: {xs: "none" , sm: "block"},
                     }}>
                         Chattify
-                    </Typography>
+                    </Typography> */}
+
+                    <Box sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: 1 
+                        }}>
+                            <Typography variant='h6' sx={{
+                                display: {xs: "none" , sm: "block"},
+                                marginRight: 1
+                            }}>
+                                Chattify
+                            </Typography>
+
+                            {/* Social Media Icons */}
+                            <Box sx={{ 
+                                display: {xs: "none" , sm: "flex"}, 
+                                gap: 0.5 
+                            }}>
+                                <Tooltip title="Visit my LinkedIn">
+                                    <IconButton 
+                                        color="inherit" 
+                                        size="small"
+                                        onClick={openLinkedIn}
+                                        sx={{ 
+                                            '&:hover': { 
+                                                color: '#0077b5' // LinkedIn blue on hover
+                                            } 
+                                        }}
+                                    >
+                                        <LinkedIn fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Visit my GitHub">
+                                    <IconButton 
+                                        color="inherit" 
+                                        size="small"
+                                        onClick={openGitHub}
+                                        sx={{ 
+                                            '&:hover': { 
+                                                color: '#6e5494' // GitHub purple on hover
+                                            } 
+                                        }}
+                                    >
+                                        <GitHub fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
+                            <Typography>
+                                Anoop Kr. Burnwal
+                            </Typography>
+                        </Box>
 
                     <Box sx={{
                         display:{ xs: "block" , sm: "none"},
                         }}
                     >
-
                         <IconButton color='inherit' onClick={handleMobile}>
 
                             <MenuIcon />
@@ -109,12 +173,16 @@ const Header = () => {
                             onClick={openNotification}
                             value={notificationCount}
                         />
+
                         <IconBtn 
                             title={"Admin Panel"}
                             icon={<AdminIcon />}
                             onClick={openAdminPanel}
                             
                         />
+
+                        <ThemeToggle />
+
                         <IconBtn 
                             title={"Logout"}
                             icon={<LogoutIcon />}

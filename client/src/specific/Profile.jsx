@@ -29,7 +29,7 @@ const Profile = ({user}) => {
 
   return (
     <div >
-      <Stack spacing={"1rem"} direction={"column"} alignItems={"center"}>
+      <Stack spacing={"1rem"} direction={"column"} alignItems={"center"} >
         <Avatar 
           src={transformImage(safeUser.avatar.url)}
           sx={{
@@ -76,7 +76,7 @@ const ProfileCard = ({text , Icon , heading}) => {
 
       <Stack>
         <Typography variant="body1">{safeText}</Typography>
-        <Typography color={"gray"} variant="caption">{safeHeading}</Typography>
+        <Typography fontSize={"1.1rem"} color={"black"} variant="caption">{safeHeading}</Typography>
       </Stack>
 
     </Stack>

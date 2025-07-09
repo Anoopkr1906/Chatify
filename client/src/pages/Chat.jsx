@@ -191,7 +191,7 @@ const Chat = ({chatId , user}) => {
 
   return chatDetails.isLoading ? (<Skeleton />) :
    (
-    <Fragment>
+    <Fragment >
       <Stack ref={containerRef}
         boxSizing={"border-box"}
         padding={"1rem"}

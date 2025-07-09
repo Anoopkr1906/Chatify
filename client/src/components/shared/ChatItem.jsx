@@ -28,7 +28,7 @@ function ChatItem({
             gap: "1rem",
             alignItems: "center",
             padding: "1rem",
-            backgroundColor: sameSender ? "black" : "unset",
+            backgroundColor: sameSender ? "blue" : "unset",
             color: sameSender ? "white" : "unset",
             position: "relative",
             cursor: "pointer",
@@ -39,12 +39,12 @@ function ChatItem({
         }}>
 
             {/* Avatar Card*/}
-            <Box sx={{ width: 80, flexShrink: 0, display: "flex", alignItems: "center", overflow: "hidden" }}>
+            <Box sx={{ width: 80, height: 36 , flexShrink: 0, display: "flex", alignItems: "center", overflow: "hidden" }}>
                 <AvatarCard avatar={avatar}/>
             </Box>
 
             <Stack>
-                <Typography >
+                <Typography sx={{fontSize: "1.2rem"}}>
                     {name}
                 </Typography>
 

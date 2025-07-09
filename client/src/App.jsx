@@ -9,6 +9,7 @@ import ProtectRoute from './components/auth/ProtectRoute'
 import { LayoutLoader } from './components/Layout/Loaders'
 import { userExists, userNotExists } from './redux/reducers/auth' // Importing userNotExists action
 import { SocketProvider } from './Socket'
+import { ThemeContextProvider } from './context/ThemeProvider';
 
 const Home = lazy( () => import("./pages/Home") ) // Lazy loading Home component
 const Login = lazy( () => import("./pages/Login") ) // Lazy loading 
@@ -44,7 +45,8 @@ const  App = () => {
     <LayoutLoader />
   ) :
    (
-    <BrowserRouter>
+    <ThemeContextProvider>
+    <BrowserRouter >
       <Suspense fallback={<LayoutLoader />}>
         <Routes>
           <Route element={
@@ -75,6 +77,7 @@ const  App = () => {
       </Suspense>
       <Toaster position="bottom-center"/>
     </BrowserRouter>
+    </ThemeContextProvider>
   )
 }
 
